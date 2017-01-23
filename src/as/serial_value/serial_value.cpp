@@ -108,47 +108,84 @@ namespace as {
 	}
 
 	serial_value::char_t& serial_value::set_char() throw() {
-		//! \todo Implement
+		if(mType != CHAR_T) {
+			set_null();
+			mType = CHAR_T;
+		}
 		return mChar;
 	}
 
 	serial_value::bool_t& serial_value::set_bool() throw() {
-		//! \todo Implement
+		if(mType != BOOL_T) {
+			set_null();
+			mType = BOOL_T;
+		}
 		return mBool;
 	}
 
 	serial_value::unsigned_t& serial_value::set_unsigned() throw() {
-		//! \todo Implement
+		if(mType != UNSIGNED_T) {
+			set_null();
+			mType = UNSIGNED_T;
+		}
 		return mUnsigned;
 	}
 
 	serial_value::signed_t& serial_value::set_signed() throw() {
-		//! \todo Implement
+		if(mType != SIGNED_T) {
+			set_null();
+			mType = SIGNED_T;
+		}
 		return mSigned;
 	}
 
 	serial_value::float_t& serial_value::set_float() throw() {
-		//! \todo Implement
+		if(mType != FLOAT_T) {
+			set_null();
+			mType = FLOAT_T;
+		}
 		return mFloat;
 	}
 
 	serial_value::pointer_t& serial_value::set_pointer() throw() {
-		//! \todo Implement
+		if(mType != POINTER_T) {
+			set_null();
+			mType = POINTER_T;
+		}
 		return mPointer;
 	}
 
 	serial_value::string_t& serial_value::set_string() throw() {
-		//! \todo Implement
-		return *mString;
+		if(mType != STRING_T) {
+			set_null();
+			mType = STRING_T;
+			mString = new string_t();
+		}else {
+			mString->clear();
+		}
+	
+	return			*mString;
 	}
 
 	serial_value::array_t& serial_value::set_array() throw() {
-		//! \todo Implement
+		if(mType != ARRAY_T) {
+			set_null();
+			mType = ARRAY_T;
+			mArray = new array_t();
+		}else {
+			mArray->clear();
+		}
 		return *mArray;
 	}
 
 	serial_value::object_t& serial_value::set_object() throw() {
-		//! \todo Implement
+		if(mType != OBJECT_T) {
+			set_null();
+			mType = OBJECT_T;
+			mObject = new object_t();
+		}else {
+			mObject->clear();
+		}
 		return *mObject;
 	}
 
