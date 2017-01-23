@@ -18,61 +18,90 @@ namespace as {
 
 	// serial_value
 
-	serial_value::serial_value() throw() {
-		//! \todo Implement
+	serial_value::serial_value() throw() :
+		mType(NULL_T)
+	{}
+
+	serial_value::serial_value(type aType) throw() :
+		mType(aType)
+	{
+		switch(mType) {
+		case STRING_T:
+			mString = new string_t();
+			break;
+		case ARRAY_T:
+			mArray = new array_t();
+			break;
+		case OBJECT_T:
+			mObject = new object_t();
+			break;
+		}
 	}
 
-	serial_value::serial_value(type) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(bool_t aValue) throw() :
+		mType(BOOL_T),
+		mBool(aValue)
+	{}
 
-	serial_value::serial_value(bool_t) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(uint8_t aValue) throw() :
+		mType(UNSIGNED_T),
+		mUnsigned(aValue)
+	{}
 
-	serial_value::serial_value(uint8_t) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(uint16_t aValue) throw() :
+		mType(UNSIGNED_T),
+		mUnsigned(aValue)
+	{}
 
-	serial_value::serial_value(uint16_t) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(uint32_t aValue) throw() :
+		mType(UNSIGNED_T),
+		mUnsigned(aValue)
+	{}
 
-	serial_value::serial_value(uint32_t) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(uint64_t aValue) throw() :
+		mType(UNSIGNED_T),
+		mUnsigned(aValue)
+	{}
 
-	serial_value::serial_value(uint64_t) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(int8_t aValue) throw() :
+		mType(SIGNED_T),
+		mSigned(aValue)
+	{}
 
-	serial_value::serial_value(int8_t) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(int16_t aValue) throw() :
+		mType(SIGNED_T),
+		mSigned(aValue)
+	{}
 
-	serial_value::serial_value(int16_t) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(int32_t aValue) throw() :
+		mType(SIGNED_T),
+		mSigned(aValue)
+	{}
 
-	serial_value::serial_value(int32_t) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(int64_t aValue) throw() :
+		mType(SIGNED_T),
+		mSigned(aValue)
+	{}
 
-	serial_value::serial_value(int64_t) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(float aValue) throw() :
+		mType(FLOAT_T),
+		mFloat(aValue)
+	{}
 
-	serial_value::serial_value(float) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(double aValue) throw() :
+		mType(FLOAT_T),
+		mFloat(aValue)
+	{}
 
-	serial_value::serial_value(const string_t&) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(const string_t& aValue) throw() :
+		mType(STRING_T),
+		mString(new string_t(aValue))
+	{}
 
-	serial_value::serial_value(const char*) throw() {
-		//! \todo Implement
-	}
+	serial_value::serial_value(const char* aValue) throw() :
+		mType(STRING_T),
+		mString(new string_t(aValue))
+	{}
 
 	serial_value::~serial_value() throw() {
 		set_null();

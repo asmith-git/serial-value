@@ -73,6 +73,7 @@ namespace as {
 		serial_value(int32_t) throw();
 		serial_value(int64_t) throw();
 		serial_value(float) throw();
+		serial_value(double) throw();
 		serial_value(const string_t&) throw();
 		serial_value(const char*) throw();
 		~serial_value() throw();
