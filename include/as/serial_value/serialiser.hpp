@@ -144,7 +144,7 @@ namespace as {
 		}
 
 		static deserialise_t deserialise(const serial_value& aValue) {
-			const std::vector<serial_value>& values = tmp.get_array();
+			const std::vector<serial_value>& values = aValue.get_array();
 			deserialise_t tmp;
 			for(const serial_value& i : values) tmp.push_back(serialiser<T>::deserialise(i));
 			return tmp;
@@ -164,7 +164,7 @@ namespace as {
 		}
 
 		static deserialise_t deserialise(const serial_value& aValue) {
-			const std::vector<serial_value>& values = tmp.get_array();
+			const std::vector<serial_value>& values = aValue.get_array();
 			deserialise_t tmp;
 			for(const serial_value& i : values) tmp.push_back(serialiser<T>::deserialise(i));
 			return tmp;
@@ -184,7 +184,7 @@ namespace as {
 		}
 
 		static deserialise_t deserialise(const serial_value& aValue) {
-			const std::vector<serial_value>& values = tmp.get_array();
+			const std::vector<serial_value>& values = aValue.get_array();
 			deserialise_t tmp;
 			for(const serial_value& i : values) tmp.push_back(serialiser<T>::deserialise(i));
 			return tmp;
@@ -204,7 +204,7 @@ namespace as {
 		}
 
 		static deserialise_t deserialise(const serial_value& aValue) {
-			const std::map<serial_value::string_t, serial_value>& values = tmp.get_object();
+			const std::map<serial_value::string_t, serial_value>& values = aValue.get_object();
 			deserialise_t tmp;
 			for(const auto& i : values) tmp.emplace(i.first, serialiser<T>::deserialise(i.second));
 			return tmp;
