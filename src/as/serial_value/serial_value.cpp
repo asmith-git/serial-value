@@ -304,8 +304,40 @@ namespace as {
 	}
 
 	serial_value::bool_t serial_value::get_bool() const {
-		//! \todo Implement
-		return mBool;
+		switch(mType) {
+		case CHAR_T:
+			if(mChar == '1' || mChar == 'y' || mChar == 'Y') return true;
+			else if(mChar == '0' || mChar == 'n' || mChar == 'N') return false;
+			break;
+		case BOOL_T:
+			return mBool;
+			break;
+		case UNSIGNED_T:
+			return mSigned > 0;
+			break;
+		case SIGNED_T:
+			return mUnsigned > 0;
+			break;
+		case FLOAT_T:
+			return mFloat >= 1.0;
+			break;
+		case POINTER_T:
+			return mPointer != nullptr;
+			break;
+		case STRING_T:
+			if(
+				*mString == "1" || *mString == "y" || *mString == "Y" || *mString == "true" ||
+				*mString == "TRUE" || *mString == "True" || *mString == "yes" || *mString == "YES" ||
+				*mString == "Yes"
+			) return true;
+			else if(
+				*mString == "0" || *mString == "n" || *mString == "N" || *mString == "false" ||
+				*mString == "FALSE" || *mString == "False" || *mString == "no" || *mString == "NO" ||
+				*mString == "N0"
+			) return true;
+			break;
+		}
+		throw std::runtime_error("as::serial_value::get_bool : Type is not convertable to bool");
 	}
 
 	serial_value::unsigned_t serial_value::get_unsigned() const {
