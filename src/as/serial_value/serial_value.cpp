@@ -461,13 +461,21 @@ namespace as {
 	}
 
 	const serial_value::array_t& serial_value::get_array() const {
-		//! \todo Implement
-		return *mArray;
+		switch(mType) {
+		case ARRAY_T:
+			return *mArray;
+			break;
+		}
+		throw std::runtime_error("as::serial_value::get_array : Type is not convertable to array");
 	}
 
 	const serial_value::object_t& serial_value::get_object() const {
-		//! \todo Implement
-		return *mObject;
+		switch(mType) {
+		case OBJECT_T:
+			return *mObject;
+			break;
+		}
+		throw std::runtime_error("as::serial_value::get_object : Type is not convertable to object");
 	}
 
 	bool serial_value::is_null() const throw() {
