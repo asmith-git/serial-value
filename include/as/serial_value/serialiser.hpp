@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <deque>
+#include <list>
 #include "serial_value.hpp"
 
 namespace as {
@@ -133,6 +135,46 @@ namespace as {
 	struct serialiser<std::vector<T>, void> {
 		typedef const std::vector<T>& serialise_t;
 		typedef std::vector<T> deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			serial_value tmp;
+			std::vector<serial_value>& values = tmp.set_array();
+			for(const T& i : aValue) values.push_back(serialiser<T>::serialise(i));
+			return tmp;
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			const std::vector<serial_value>& values = tmp.get_array();
+			deserialise_t tmp;
+			for(const serial_value& i : values) tmp.push_back(serialiser<T>::deserialise(i));
+			return tmp;
+		}
+	};
+
+	template<class T>
+	struct serialiser<std::deque<T>, void> {
+		typedef const std::deque<T>& serialise_t;
+		typedef std::vector<T> deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			serial_value tmp;
+			std::vector<serial_value>& values = tmp.set_array();
+			for(const T& i : aValue) values.push_back(serialiser<T>::serialise(i));
+			return tmp;
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			const std::vector<serial_value>& values = tmp.get_array();
+			deserialise_t tmp;
+			for(const serial_value& i : values) tmp.push_back(serialiser<T>::deserialise(i));
+			return tmp;
+		}
+	};
+
+	template<class T>
+	struct serialiser<std::list<T>, void> {
+		typedef const std::list<T>& serialise_t;
+		typedef std::list<T> deserialise_t;
 
 		static serial_value serialise(serialise_t aValue) {
 			serial_value tmp;
