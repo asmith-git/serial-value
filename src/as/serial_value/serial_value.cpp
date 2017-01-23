@@ -276,8 +276,31 @@ namespace as {
 	}
 
 	serial_value::char_t serial_value::get_char() const {
-		//! \todo Implement
-		return mChar;
+		switch(mType) {
+		case CHAR_T:
+			return mChar;
+			break;
+		case BOOL_T:
+			return mBool ? '1' : '0';
+			break;
+		case UNSIGNED_T:
+			if(mUnsigned >= 0 && mUnsigned <= 9) return static_cast<char_t>('0' + mUnsigned);
+			break;
+		case SIGNED_T:
+			if(mSigned >= 0 && mSigned <= 9) return static_cast<char_t>('0' + mSigned);
+			break;
+		case FLOAT_T:
+			{
+				const int64_t tmp = static_cast<int64_t>(mFloat);
+				if(static_cast<float_t>(tmp) == mFloat && tmp >= 0 && tmp <= 9) 
+					return static_cast<char_t>('0' + tmp);
+			}
+			break;
+		case STRING_T:
+			if(mString->size() == 1) mString->front();
+			break;
+		}
+		throw std::runtime_error("as::serial_value::get_char : Type is not convertable to char");
 	}
 
 	serial_value::bool_t serial_value::get_bool() const {
