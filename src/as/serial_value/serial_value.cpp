@@ -479,53 +479,97 @@ namespace as {
 	}
 
 	bool serial_value::is_null() const throw() {
-		//! \todo Implement
-		return false;
+		return mType == NULL_T;
 	}
 
 	bool serial_value::is_char() const throw() {
-		//! \todo Implement
-		return false;
+		if(mType == CHAR_T) return true;
+		try{
+			get_char();
+			return true;
+		}catch(...) {
+			return false;
+		}
 	}
 
 	bool serial_value::is_bool() const throw() {
-		//! \todo Implement
-		return false;
+		if(mType == BOOL_T) return true;
+		try{
+			get_bool();
+			return true;
+		}catch(...) {
+			return false;
+		}
 	}
 
 	bool serial_value::is_unsigned() const throw() {
-		//! \todo Implement
-		return false;
+		if(mType == UNSIGNED_T) return true;
+		try{
+			get_unsigned();
+			return true;
+		}catch(...) {
+			return false;
+		}
 	}
 
 	bool serial_value::is_signed() const throw() {
-		//! \todo Implement
-		return false;
+		if(mType == SIGNED_T) return true;
+		try{
+			get_signed();
+			return true;
+		}catch(...) {
+			return false;
+		}
 	}
 
 	bool serial_value::is_float() const throw() {
-		//! \todo Implement
-		return false;
+		if(mType == FLOAT_T) return true;
+		try{
+			get_float();
+			return true;
+		}catch(...) {
+			return false;
+		}
 	}
 
 	bool serial_value::is_pointer() const throw() {
-		//! \todo Implement
-		return false;
+		if(mType == POINTER_T) return true;
+		try{
+			get_pointer();
+			return true;
+		}catch(...) {
+			return false;
+		}
 	}
 
 	bool serial_value::is_string() const {
-		//! \todo Implement
-		return false;
+		if(mType == STRING_T) return true;
+		try{
+			get_string();
+			return true;
+		}catch(...) {
+			return false;
+		}
 	}
 
 	bool serial_value::is_array() const {
-		//! \todo Implement
-		return false;
+		if(mType == ARRAY_T) return true;
+		try{
+			get_array();
+			return true;
+		}catch(...) {
+			return false;
+		}
 	}
 
 	bool serial_value::is_object() const {
-		//! \todo Implement
-		return false;
+		if(mType == OBJECT_T) return true;
+		try{
+			get_object();
+			return true;
+		}catch(...) {
+			return false;
+		}
 	}
 
 }
