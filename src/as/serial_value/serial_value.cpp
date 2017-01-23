@@ -22,6 +22,18 @@ namespace as {
 		mType(NULL_T)
 	{}
 
+	serial_value::serial_value(serial_value&& aOther) throw() :
+		mType(NULL_T)
+	{
+		operator=(std::move(aOther));
+	}
+
+	serial_value::serial_value(const serial_value& aOther) throw() :
+		mType(NULL_T)
+	{
+		operator=(aOther);
+	}
+
 	serial_value::serial_value(type aType) throw() :
 		mType(aType)
 	{
@@ -105,6 +117,80 @@ namespace as {
 
 	serial_value::~serial_value() throw() {
 		set_null();
+	}
+
+	serial_value& serial_value::operator=(serial_value&& aOther) throw() {
+		set_null();
+		switch(aOther.mType) {
+		case CHAR_T:
+			mChar = aOther.mChar;
+			break;
+		case BOOL_T:
+			mBool = aOther.mBool;
+			break;
+		case UNSIGNED_T:
+			mUnsigned = aOther.mUnsigned;
+			break;
+		case SIGNED_T:
+			mSigned = aOther.mSigned;
+			break;
+		case FLOAT_T:
+			mFloat = aOther.mFloat;
+			break;
+		case POINTER_T:
+			mPointer = aOther.mPointer;
+			break;
+		case STRING_T:
+			mString = aOther.mString;
+			break;
+		case ARRAY_T:
+			mArray = aOther.mArray;
+			break;
+		case OBJECT_T:
+			mObject = aOther.mObject;
+			break;
+		}
+		mType = aOther.mType;
+		aOther.mType = NULL_T;
+		return *this;
+	}
+
+	serial_value& serial_value::operator=(const serial_value& aOther) throw() {
+		if(mType != aOther.mType) set_null();
+		switch(aOther.mType) {
+		case CHAR_T:
+			mChar = aOther.mChar;
+			break;
+		case BOOL_T:
+			mBool = aOther.mBool;
+			break;
+		case UNSIGNED_T:
+			mUnsigned = aOther.mUnsigned;
+			break;
+		case SIGNED_T:
+			mSigned = aOther.mSigned;
+			break;
+		case FLOAT_T:
+			mFloat = aOther.mFloat;
+			break;
+		case POINTER_T:
+			mPointer = aOther.mPointer;
+			break;
+		case STRING_T:
+			if(mType == STRING_T) *mString = *aOther.mString;
+			else mString = new string_t(*aOther.mString);
+			break;
+		case ARRAY_T:
+			if(mType == ARRAY_T) *mArray = *aOther.mArray;
+			else mArray = new array_t(*aOther.mArray);
+			break;
+		case OBJECT_T:
+			if(mType == OBJECT_T) *mObject = *aOther.mObject;
+			else mObject = new object_t(*aOther.mObject);
+			break;
+		}
+		mType = aOther.mType;
+		return *this;
 	}
 
 	void serial_value::set_null() throw() {

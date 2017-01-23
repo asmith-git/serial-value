@@ -62,6 +62,8 @@ namespace as {
 		type mType;
 	public:
 		serial_value() throw();
+		serial_value(serial_value&&) throw();
+		serial_value(const serial_value&) throw();
 		serial_value(type) throw();
 		serial_value(bool_t) throw();
 		serial_value(uint8_t) throw();
@@ -77,6 +79,9 @@ namespace as {
 		serial_value(const string_t&) throw();
 		serial_value(const char*) throw();
 		~serial_value() throw();
+
+		serial_value& operator=(serial_value&&) throw();
+		serial_value& operator=(const serial_value&) throw();
 	
 		void set_null() throw();
 		char_t& set_char() throw();
