@@ -210,6 +210,43 @@ namespace as {
 			return tmp;
 		}
 	};
+
+	template<class K, class T>
+	struct serialiser<std::map<K,T>, void> {
+		typedef const std::map<K,T>& serialise_t;
+		typedef std::map<K,T> deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			serial_value tmp;
+			std::map<serial_value::string_t, serial_value>& parent = tmp.set_object();
+			parent.emplace("keys", serial_value());
+			parent.emplace("values", serial_value());
+			std::vector<serial_value>& keys = parent.find("keys")->second.set_array();
+			std::vector<serial_value>& values = parent.find("values")->second.set_array();
+
+			for(const auto& i : aValue) {
+				keys.push_back(serialiser<K>::serialise(i.first));
+				values.push_back(serialiser<T>::serialise(i.second));
+			}
+			return tmp;
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			const std::vector<serial_value>& keys = aValue["keys"].get_array();
+			const std::vector<serial_value>& values = aValue["values"].get_array();
+			const size_t size = keys.size();
+			deserialise_t tmp;
+
+			for(size_t i = 0; i < size; ++i) {
+				tmp.emplace(
+					serialiser<K>::deserialise(keys[i]),
+					serialiser<T>::deserialise(values[i])
+				);
+			}
+
+			return tmp;
+		}
+	};
 }
 
 #endif
