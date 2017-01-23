@@ -75,11 +75,36 @@ namespace as {
 	}
 
 	serial_value::~serial_value() throw() {
-		//! \todo Implement
+		set_null();
 	}
 
 	void serial_value::set_null() throw() {
-		//! \todo Implement
+		switch(mType) {
+		case NULL_T :
+			break;
+		case CHAR_T:
+			break;
+		case BOOL_T:
+			break;
+		case UNSIGNED_T:
+			break;
+		case SIGNED_T:
+			break;
+		case FLOAT_T:
+			break;
+		case POINTER_T:
+			break;
+		case STRING_T:
+			delete mString;
+			break;
+		case ARRAY_T:
+			delete mArray;
+			break;
+		case OBJECT_T:
+			delete mObject;
+			break;
+		}
+		mType = NULL_T;
 	}
 
 	serial_value::char_t& serial_value::set_char() throw() {
