@@ -99,12 +99,12 @@ namespace as {
 		array_t& get_array() ;
 		object_t& get_object();
 		
-		char_t get_char() const throw();
-		bool_t get_bool() const throw();
-		unsigned_t get_unsigned() const throw();
-		signed_t get_signed() const throw();
-		float_t get_float() const throw();
-		pointer_t get_pointer() const throw();
+		char_t get_char() const;
+		bool_t get_bool() const;
+		unsigned_t get_unsigned() const;
+		signed_t get_signed() const;
+		float_t get_float() const;
+		pointer_t get_pointer() const;
 		const string_t& get_string() const;
 		const array_t& get_array() const;
 		const object_t& get_object() const;

@@ -219,76 +219,88 @@ namespace as {
 	}
 
 	serial_value::char_t& serial_value::get_char() {
-		//! \todo Implement
+		if(mType == CHAR_T) return mChar;
+		set_char() = const_cast<const serial_value*>(this)->get_char();
 		return mChar;
 	}
 
 	serial_value::bool_t& serial_value::get_bool() {
-		//! \todo Implement
+		if(mType == BOOL_T) return mBool;
+		set_bool() = const_cast<const serial_value*>(this)->get_bool();
 		return mBool;
 	}
 
 	serial_value::unsigned_t& serial_value::get_unsigned() {
-		//! \todo Implement
+		if(mType == UNSIGNED_T) return mUnsigned;
+		set_unsigned() = const_cast<const serial_value*>(this)->get_unsigned();
 		return mUnsigned;
 	}
 
 	serial_value::signed_t& serial_value::get_signed() {
-		//! \todo Implement
+		if(mType == SIGNED_T) return mSigned;
+		set_signed() = const_cast<const serial_value*>(this)->get_signed();
 		return mSigned;
 	}
 
 	serial_value::float_t& serial_value::get_float() {
-		//! \todo Implement
+		if(mType == FLOAT_T) return mFloat;
+		set_float() = const_cast<const serial_value*>(this)->get_float();
 		return mFloat;
 	}
 
 	serial_value::pointer_t& serial_value::get_pointer() {
-		//! \todo Implement
+		if(mType == POINTER_T) return mPointer;
+		set_pointer() = const_cast<const serial_value*>(this)->get_pointer();
 		return mPointer;
 	}
 
 	serial_value::string_t& serial_value::get_string() {
-		//! \todo Implement
+		if(mType == STRING_T) return *mString;
+		const string_t tmp = const_cast<const serial_value*>(this)->get_string();
+		set_string() = tmp;
 		return *mString;
 	}
 
 	serial_value::array_t& serial_value::get_array() {
-		//! \todo Implement
+		if(mType == ARRAY_T) return *mArray;
+		const array_t tmp = const_cast<const serial_value*>(this)->get_array();
+		set_array() = tmp;
 		return *mArray;
 	}
 
 	serial_value::object_t& serial_value::get_object() {
-		//! \todo Implement
+		if(mType == OBJECT_T) return *mObject;
+		const object_t tmp = const_cast<const serial_value*>(this)->get_object();
+		set_object() = tmp;
 		return *mObject;
 	}
 
-	serial_value::char_t serial_value::get_char() const throw() {
+	serial_value::char_t serial_value::get_char() const {
 		//! \todo Implement
 		return mChar;
 	}
 
-	serial_value::bool_t serial_value::get_bool() const throw() {
+	serial_value::bool_t serial_value::get_bool() const {
 		//! \todo Implement
 		return mBool;
 	}
 
-	serial_value::unsigned_t serial_value::get_unsigned() const throw() {
+	serial_value::unsigned_t serial_value::get_unsigned() const {
 		//! \todo Implement
 		return mUnsigned;
 	}
 
-	serial_value::signed_t serial_value::get_signed() const throw() {
+	serial_value::signed_t serial_value::get_signed() const {
 		//! \todo Implement
 		return mSigned;
 	}
 
-	serial_value::float_t serial_value::get_float() const throw() {
+	serial_value::float_t serial_value::get_float() const {
 		//! \todo Implement
 		return mFloat;
 	}
 
-	serial_value::pointer_t serial_value::get_pointer() const throw() {
+	serial_value::pointer_t serial_value::get_pointer() const {
 		//! \todo Implement
 		return mPointer;
 	}
