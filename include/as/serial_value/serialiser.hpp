@@ -32,8 +32,8 @@ namespace as {
 
 	template<>
 	struct serialiser<char, void> {
-		typedef bool serialise_t;
-		typedef bool deserialise_t;
+		typedef char serialise_t;
+		typedef char deserialise_t;
 
 		static serial_value serialise(serialise_t aValue) {
 			return serial_value(aValue);
@@ -124,6 +124,28 @@ namespace as {
 
 		static deserialise_t deserialise(const serial_value& aValue) {
 			return aValue.get_string();
+		}
+	};
+
+	// -- Container specialisations
+
+	template<class T>
+	struct serialiser<std::vector<T>, void> {
+		typedef const std::vector<T>& serialise_t;
+		typedef std::vector<T> deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			serial_value tmp;
+			std::vector<serial_value>& values = tmp.set_array();
+			for(const T& i : aValue) values.push_back(serialiser<T>::serialise(i));
+			return tmp;
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			const std::vector<serial_value>& values = tmp.get_array();
+			deserialise_t tmp;
+			for(const serial_value& i : values) tmp.push_back(serialiser<T>::deserialise(i));
+			return tmp;
 		}
 	};
 }
