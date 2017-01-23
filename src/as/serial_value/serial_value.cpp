@@ -313,10 +313,10 @@ namespace as {
 			return mBool;
 			break;
 		case UNSIGNED_T:
-			return mSigned > 0;
+			return mUnsigned > 0;
 			break;
 		case SIGNED_T:
-			return mUnsigned > 0;
+			return mSigned > 0;
 			break;
 		case FLOAT_T:
 			return mFloat >= 1.0;
@@ -341,8 +341,31 @@ namespace as {
 	}
 
 	serial_value::unsigned_t serial_value::get_unsigned() const {
-		//! \todo Implement
-		return mUnsigned;
+		switch(mType) {
+		case CHAR_T:
+			if(mChar >= '0' && mChar <= '9') return mChar - '0';
+			break;
+		case BOOL_T:
+			return mBool ? 1 : 0;
+			break;
+		case UNSIGNED_T:
+			return mUnsigned;
+			break;
+		case SIGNED_T:
+			return static_cast<unsigned_t>(mSigned);
+			break;
+		case FLOAT_T:
+			return static_cast<unsigned_t>(mFloat);
+			break;
+		case STRING_T:
+			try{
+				const int tmp = std::stoi(*mString);
+				return static_cast<unsigned_t>(tmp);
+			}catch(...) {}
+
+			break;
+		}
+		throw std::runtime_error("as::serial_value::get_unsigned : Type is not convertable to unsigned");
 	}
 
 	serial_value::signed_t serial_value::get_signed() const {
