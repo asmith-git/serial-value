@@ -425,8 +425,12 @@ namespace as {
 	}
 
 	serial_value::pointer_t serial_value::get_pointer() const {
-		//! \todo Implement
-		return mPointer;
+		switch(mType) {
+		case POINTER_T:
+			return mPointer;
+			break;
+		}
+		throw std::runtime_error("as::serial_value::get_pointer : Type is not convertable to pointer");
 	}
 
 	const serial_value::string_t& serial_value::get_string() const {
