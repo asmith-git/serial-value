@@ -27,6 +27,105 @@ namespace as {
 		static serial_value serialise(serialise_t);
 		static deserialise_t deserialise(const serial_value&);
 	};
+
+	// -- Specialisations
+
+	template<>
+	struct serialiser<char, void> {
+		typedef bool serialise_t;
+		typedef bool deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			return serial_value(aValue);
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			return aValue.get_char();
+		}
+	};
+
+	template<>
+	struct serialiser<bool, void> {
+		typedef bool serialise_t;
+		typedef bool deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			return serial_value(aValue);
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			return aValue.get_bool();
+		}
+	};
+
+	template<class T>
+	struct serialiser<T, typename std::enable_if<
+		std::is_same<T, uint8_t>::value ||
+		std::is_same<T, uint16_t>::value ||
+		std::is_same<T, uint32_t>::value ||
+		std::is_same<T, uint64_t>::value
+	>::type> {
+		typedef T serialise_t;
+		typedef T deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			return serial_value(aValue);
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			return static_cast<deserialise_t>(aValue.get_unsigned());
+		}
+	};
+
+	template<class T>
+	struct serialiser<T, typename std::enable_if<
+		std::is_same<T, int8_t>::value ||
+		std::is_same<T, int16_t>::value ||
+		std::is_same<T, int32_t>::value ||
+		std::is_same<T, int64_t>::value
+	>::type> {
+		typedef T serialise_t;
+		typedef T deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			return serial_value(aValue);
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			return static_cast<deserialise_t>(aValue.get_signed());
+		}
+	};
+
+	template<class T>
+	struct serialiser<T, typename std::enable_if<
+		std::is_same<T, float>::value ||
+		std::is_same<T, double>::value
+	>::type> {
+		typedef T serialise_t;
+		typedef T deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			return serial_value(aValue);
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			return static_cast<deserialise_t>(aValue.get_float());
+		}
+	};
+
+	template<>
+	struct serialiser<std::string, void> {
+		typedef const std::string& serialise_t;
+		typedef std::string deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			return serial_value(aValue);
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			return aValue.get_string();
+		}
+	};
 }
 
 #endif
