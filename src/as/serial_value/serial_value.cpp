@@ -193,22 +193,55 @@ namespace as {
 		return *this;
 	}
 
+	size_t serial_value::size() const throw() {
+		return mType == ARRAY_T ? mArray->size() : mType == OBJECT_T ? mObject->size() : 0;
+	}
+
+	serial_value& serial_value::operator[](size_t aIndex) {
+		return const_cast<serial_value&>(const_cast<const serial_value*>(this)->operator[](aIndex));
+	}
+
+	const serial_value& serial_value::operator[](size_t aIndex) const {
+		switch (mType) {
+		case ARRAY_T:
+			return mArray->operator[](aIndex);
+			break;
+		case OBJECT_T:
+			{
+				const auto end = mObject->end();
+				auto i = mObject->begin();
+				for(size_t j = 0; j < aIndex; ++j) {
+					++i;
+					if(i == end) throw std::runtime_error("as::serial_value::operator[] : Index is out of bounds");
+				}
+				return i->second;
+			}
+			break;
+		}
+		throw std::runtime_error("as::serial_value::operator[] : Type is not ARRAY_T or OBJECT_T");
+	}
+
+	serial_value& serial_value::operator[](const char* aIndex) {
+		return operator[](string_t(aIndex));
+	}
+
+	const serial_value& serial_value::operator[](const char* aIndex) const {
+		return operator[](string_t(aIndex));
+	}
+
+	serial_value& serial_value::operator[](const string_t& aIndex) {
+		return const_cast<serial_value&>(const_cast<const serial_value*>(this)->operator[](aIndex));
+	}
+
+	const serial_value& serial_value::operator[](const string_t& aIndex) const {
+		if(mType != OBJECT_T) throw std::runtime_error("as::serial_value::operator[] : Type is not OBJECT_T");
+		const auto i = mObject->find(aIndex);
+		if(i == mObject->end()) throw std::runtime_error("as::serial_value::operator[] : Member with given key not found");
+		return i->second;
+	}
+
 	void serial_value::set_null() throw() {
 		switch(mType) {
-		case NULL_T :
-			break;
-		case CHAR_T:
-			break;
-		case BOOL_T:
-			break;
-		case UNSIGNED_T:
-			break;
-		case SIGNED_T:
-			break;
-		case FLOAT_T:
-			break;
-		case POINTER_T:
-			break;
 		case STRING_T:
 			delete mString;
 			break;

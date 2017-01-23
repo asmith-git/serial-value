@@ -82,6 +82,14 @@ namespace as {
 
 		serial_value& operator=(serial_value&&) throw();
 		serial_value& operator=(const serial_value&) throw();
+
+		size_t size() const throw();
+		serial_value& operator[](size_t);
+		const serial_value& operator[](size_t) const;
+		serial_value& operator[](const char*);
+		const serial_value& operator[](const char*) const;
+		serial_value& operator[](const string_t&);
+		const serial_value& operator[](const string_t&) const;
 	
 		void set_null() throw();
 		char_t& set_char() throw();
