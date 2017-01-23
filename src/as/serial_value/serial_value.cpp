@@ -369,8 +369,31 @@ namespace as {
 	}
 
 	serial_value::signed_t serial_value::get_signed() const {
-		//! \todo Implement
-		return mSigned;
+		switch(mType) {
+		case CHAR_T:
+			if(mChar >= '0' && mChar <= '9') return mChar - '0';
+			break;
+		case BOOL_T:
+			return mBool ? 1 : 0;
+			break;
+		case UNSIGNED_T:
+			return static_cast<signed_t>(mUnsigned);
+			break;
+		case SIGNED_T:
+			return mSigned;
+			break;
+		case FLOAT_T:
+			return static_cast<signed_t>(mFloat);
+			break;
+		case STRING_T:
+			try{
+				const int tmp = std::stoi(*mString);
+				return static_cast<signed_t>(tmp);
+			}catch(...) {}
+
+			break;
+		}
+		throw std::runtime_error("as::serial_value::get_signed : Type is not convertable to signed");
 	}
 
 	serial_value::float_t serial_value::get_float() const {
