@@ -105,7 +105,7 @@ namespace as {
 		signed_t get_signed() const;
 		float_t get_float() const;
 		pointer_t get_pointer() const;
-		const string_t& get_string() const;
+		const string_t get_string() const;
 		const array_t& get_array() const;
 		const object_t& get_object() const;
 		
