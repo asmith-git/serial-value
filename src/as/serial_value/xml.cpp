@@ -17,6 +17,7 @@
 #include "as/serial_value/xml.hpp"
 
 #define ASMITH_SERIAL_PTR "as::serial_value::pointer_t="
+#define ASMITH_SERIAL_XML "__as_serial_xml_element"
 
 bool write_attribute(std::ostream& aStream, const std::string& aName, const as::serial_value& aValue) {
 	//! \todo Remove chars illegal in XML
@@ -117,35 +118,9 @@ void write_element(std::ostream& aStream, const std::string& aName, const as::se
 	}
 }
 
-void write_value_x(std::ostream& aStream, const as::serial_value& aValue) {
-	//! \todo Implement
-	switch (aValue.get_type()) {
-	case as::serial_value::NULL_T:
-		break;
-	case as::serial_value::CHAR_T:
-		break;
-	case as::serial_value::BOOL_T:
-		break;
-	case as::serial_value::UNSIGNED_T:
-		break;
-	case as::serial_value::SIGNED_T:
-		break;
-	case as::serial_value::FLOAT_T:
-		break;
-	case as::serial_value::POINTER_T:
-		break;
-	case as::serial_value::STRING_T:
-		break;
-	case as::serial_value::ARRAY_T:
-		break;
-	case as::serial_value::OBJECT_T:
-		break;
-	}
-}
-
 namespace as {
 	void serialise_xml(std::ostream& aStream, const serial_value& aValue) {
-		write_value_x(aStream, aValue);
+		write_element(aStream, ASMITH_SERIAL_XML, aValue);
 	}
 
 	serial_value deserialise_xml(std::istream& aStream) {
