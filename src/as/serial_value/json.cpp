@@ -134,6 +134,7 @@ as::serial_value read_string(std::istream& aStream) {
 		str += c;
 		aStream >> c;
 	}
+	if(str.size() == 1) return as::serial_value(str[0]);
 	return tmp;
 }
 
