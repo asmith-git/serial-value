@@ -691,4 +691,8 @@ namespace as {
 		}
 	}
 
+	serial_value::type serial_value::get_type() const throw() {
+		return mType;
+	}
+
 }
