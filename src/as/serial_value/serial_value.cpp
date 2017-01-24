@@ -105,6 +105,11 @@ namespace as {
 		mFloat(aValue)
 	{}
 
+	serial_value::serial_value(pointer_t aValue) throw() :
+		mType(POINTER_T),
+		mPointer(aValue)
+	{}
+
 	serial_value::serial_value(const string_t& aValue) throw() :
 		mType(STRING_T),
 		mString(new string_t(aValue))
