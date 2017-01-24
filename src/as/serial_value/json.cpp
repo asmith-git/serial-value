@@ -118,6 +118,7 @@ as::serial_value read_number(std::istream& aStream) {
 }
 
 as::serial_value read_string(std::istream& aStream) {
+	//! \todo Handle control character '\'
 	auto pos = aStream.tellg();
 	char c;
 	aStream >> c;
