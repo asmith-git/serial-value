@@ -22,31 +22,57 @@ bool write_attribute(std::ostream& aStream, const std::string& aName, const as::
 	//! \todo Remove chars illegal in XML
 	switch (aValue.get_type()) {
 	case as::serial_value::NULL_T:
-		std::cout << aName << '=' << '"' << "null" << '"';
+		aStream << aName << '=' << '"' << "null" << '"';
 		return true;
 	case as::serial_value::CHAR_T:
-		std::cout << aName << '=' << '"' << aValue.get_char() << '"';
+		aStream << aName << '=' << '"' << aValue.get_char() << '"';
 		return true;
 	case as::serial_value::BOOL_T:
-		std::cout << aName << '=' << '"' << (aValue.get_bool() ? "true" : "false") << '"';
+		aStream << aName << '=' << '"' << (aValue.get_bool() ? "true" : "false") << '"';
 		return true;
 	case as::serial_value::UNSIGNED_T:
-		std::cout << aName << '=' << '"' << aValue.get_unsigned() << '"';
+		aStream << aName << '=' << '"' << aValue.get_unsigned() << '"';
 		return true;
 	case as::serial_value::SIGNED_T:
-		std::cout << aName << '=' << '"' << aValue.get_signed() << '"';
+		aStream << aName << '=' << '"' << aValue.get_signed() << '"';
 		return true;
 	case as::serial_value::FLOAT_T:
-		std::cout << aName << '=' << '"' << aValue.get_float() << '"';
+		aStream << aName << '=' << '"' << aValue.get_float() << '"';
 		return true;
 	case as::serial_value::POINTER_T:
-		std::cout << aName << '=' << '"' << ASMITH_SERIAL_PTR  << aValue.get_pointer() << '"';
+		aStream << aName << '=' << '"' << ASMITH_SERIAL_PTR  << aValue.get_pointer() << '"';
 		return true;
 	case as::serial_value::STRING_T:
-		std::cout << aName << '=' << '"' << aValue.get_string() << '"';
+		aStream << aName << '=' << '"' << aValue.get_string() << '"';
 		return true;
 	default:
 		return false;
+	}
+}
+
+void write_element(std::ostream& aStream, const std::string& aName, const as::serial_value& aValue) {
+	//! \todo Remove chars illegal in XML
+	switch (aValue.get_type()) {
+	case as::serial_value::NULL_T:
+		break;
+	case as::serial_value::CHAR_T:
+		break;
+	case as::serial_value::BOOL_T:
+		break;
+	case as::serial_value::UNSIGNED_T:
+		break;
+	case as::serial_value::SIGNED_T:
+		break;
+	case as::serial_value::FLOAT_T:
+		break;
+	case as::serial_value::POINTER_T:
+		break;
+	case as::serial_value::STRING_T:
+		break;
+	case as::serial_value::ARRAY_T:
+		break;
+	case as::serial_value::OBJECT_T:
+		break;
 	}
 }
 
