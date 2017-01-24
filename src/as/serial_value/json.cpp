@@ -161,7 +161,7 @@ as::serial_value read_array(std::istream& aStream) {
 
 		if(aStream.eof()) {
 			aStream.seekg(pos);
-			throw std::runtime_error("as::deserialise_json : Expected array to end with']'");
+			throw std::runtime_error("as::deserialise_json : Expected array to end with ']'");
 		}
 	}
 	aStream >> c;
@@ -169,8 +169,37 @@ as::serial_value read_array(std::istream& aStream) {
 }
 
 as::serial_value read_object(std::istream& aStream) {
+	auto pos = aStream.tellg();
+	char c;
+	aStream >> c;
+	if (c != '{') {
+		aStream.seekg(pos);
+		throw std::runtime_error("as::deserialise_json : Expected object to begin with '{'");
+	}
 	as::serial_value tmp;
-	//! \todo Implement
+	as::serial_value::object_t& values = tmp.set_object();
+	c = aStream.peek();
+	while(c != '}') {
+		ignore_whitespace(aStream);
+		if(c == ',') aStream >> c;
+
+		try {
+			as::serial_value::string_t name = read_string(aStream).get_string();
+			ignore_whitespace(aStream);
+			aStream >> c;
+			if(c != ':') throw std::runtime_error("as::deserialise_json : Expected object members to be seperated with ':'");
+			values.emplace(name, read_unknown(aStream));
+		}catch (std::exception& e) {
+			aStream.seekg(pos);
+			throw e;
+		}
+
+		if(aStream.eof()) {
+			aStream.seekg(pos);
+			throw std::runtime_error("as::deserialise_json : Expected object to end with '}'");
+		}
+	}
+	aStream >> c;
 	return tmp;
 }
 
