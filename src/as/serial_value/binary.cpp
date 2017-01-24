@@ -15,27 +15,77 @@
 #include "as/serial_value/binary.hpp"
 
 void write_value_b(std::ostream& aStream, const as::serial_value& aValue) {
-	//!< Todo Implement
+	const uint8_t type = aValue.get_type();
+	aStream.write(reinterpret_cast<const char*>(&type), 1);
+
 	switch(aValue.get_type()) {
 	case as::serial_value::NULL_T:
 		break;
 	case as::serial_value::CHAR_T:
+		{
+			const as::serial_value::char_t value = aValue.get_char();
+			aStream.write(&value, sizeof(as::serial_value::char_t));
+		}
 		break;
 	case as::serial_value::BOOL_T:
+		{
+			const as::serial_value::bool_t value = aValue.get_bool();
+			aStream.write(reinterpret_cast<const char*>(&value), sizeof(as::serial_value::bool_t));
+		}
 		break;
 	case as::serial_value::UNSIGNED_T:
+		{
+			const as::serial_value::unsigned_t value = aValue.get_unsigned();
+			aStream.write(reinterpret_cast<const char*>(&value), sizeof(as::serial_value::unsigned_t));
+		}
 		break;
 	case as::serial_value::SIGNED_T:
+		{
+			const as::serial_value::signed_t value = aValue.get_signed();
+			aStream.write(reinterpret_cast<const char*>(&value), sizeof(as::serial_value::signed_t));
+		}
 		break;
 	case as::serial_value::FLOAT_T:
+		{
+			const as::serial_value::float_t value = aValue.get_float();
+			aStream.write(reinterpret_cast<const char*>(&value), sizeof(as::serial_value::float_t));
+		}
 		break;
 	case as::serial_value::POINTER_T:
+		{
+			const as::serial_value::pointer_t value = aValue.get_pointer();
+			aStream.write(reinterpret_cast<const char*>(&value), sizeof(as::serial_value::pointer_t));
+		}
 		break;
 	case as::serial_value::STRING_T:
+		{
+			const as::serial_value::string_t& value = aValue.get_string();
+			const uint16_t size = static_cast<uint16_t>(value.size());
+			aStream.write(reinterpret_cast<const char*>(&size), 2);
+			aStream.write(value.c_str(), size);
+		}
 		break;
 	case as::serial_value::ARRAY_T:
+		{
+			const as::serial_value::array_t& value = aValue.get_array();
+			const uint16_t size = static_cast<uint16_t>(value.size());
+			aStream.write(reinterpret_cast<const char*>(&size), 2);
+			for(size_t i = 0; i < size; ++i) write_value_b(aStream, value[i]);
+		}
 		break;
 	case as::serial_value::OBJECT_T:
+		{
+			const as::serial_value::object_t& value = aValue.get_object();
+			uint16_t size = static_cast<uint16_t>(value.size());
+			aStream.write(reinterpret_cast<const char*>(&size), 2);
+			const auto end = value.end();
+			for(auto i = value.begin(); i != end; ++i) {
+				size = static_cast<uint16_t>(i->first.size());
+				aStream.write(reinterpret_cast<const char*>(&size), 2);
+				aStream.write(i->first.c_str(), size);
+				write_value_b(aStream, i->second);
+			}
+		}
 		break;
 	}
 }
