@@ -118,6 +118,13 @@ void write_element(std::ostream& aStream, const std::string& aName, const as::se
 	}
 }
 
+struct element {
+	std::string name;
+	std::string body;
+	std::map<std::string, std::string> attributes;
+	std::vector<element> elements;
+};
+
 namespace as {
 	void serialise_xml(std::ostream& aStream, const serial_value& aValue) {
 		write_element(aStream, ASMITH_SERIAL_XML, aValue);
