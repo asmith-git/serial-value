@@ -150,6 +150,7 @@ as::serial_value read_array(std::istream& aStream) {
 	c = aStream.peek();
 	while(c != ']') {
 		ignore_whitespace(aStream);
+		c = aStream.peek();
 		if(c == ',') aStream >> c;
 
 		try {
@@ -163,6 +164,7 @@ as::serial_value read_array(std::istream& aStream) {
 			aStream.seekg(pos);
 			throw std::runtime_error("as::deserialise_json : Expected array to end with ']'");
 		}
+		c = aStream.peek();
 	}
 	aStream >> c;
 	return tmp;
@@ -181,6 +183,7 @@ as::serial_value read_object(std::istream& aStream) {
 	c = aStream.peek();
 	while(c != '}') {
 		ignore_whitespace(aStream);
+		c = aStream.peek();
 		if(c == ',') aStream >> c;
 
 		try {
@@ -198,6 +201,7 @@ as::serial_value read_object(std::istream& aStream) {
 			aStream.seekg(pos);
 			throw std::runtime_error("as::deserialise_json : Expected object to end with '}'");
 		}
+		c = aStream.peek();
 	}
 	aStream >> c;
 	return tmp;
