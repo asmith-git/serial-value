@@ -93,18 +93,31 @@ void write_value_b(std::ostream& aStream, const as::serial_value& aValue) {
 as::serial_value read_unknown_b(std::istream&);
 
 as::serial_value read_null_b(std::istream& aStream) {
-	//! \todo Implement
 	return as::serial_value();
 }
 
 as::serial_value read_bool_b(std::istream& aStream) {
-	//! \todo Implement
-	return as::serial_value();
+	as::serial_value::bool_t value;
+	aStream.read(reinterpret_cast<char*>(&value), sizeof(as::serial_value::bool_t));
+	return as::serial_value(value);
 }
 
-as::serial_value read_number_b(std::istream& aStream) {
-	//! \todo Implement
-	return as::serial_value();
+as::serial_value read_unsigned_b(std::istream& aStream) {
+	as::serial_value::unsigned_t value;
+	aStream.read(reinterpret_cast<char*>(&value), sizeof(as::serial_value::unsigned_t));
+	return as::serial_value(value);
+}
+
+as::serial_value read_signed_b(std::istream& aStream) {
+	as::serial_value::signed_t value;
+	aStream.read(reinterpret_cast<char*>(&value), sizeof(as::serial_value::signed_t));
+	return as::serial_value(value);
+}
+
+as::serial_value read_float_b(std::istream& aStream) {
+	as::serial_value::float_t value;
+	aStream.read(reinterpret_cast<char*>(&value), sizeof(as::serial_value::float_t));
+	return as::serial_value(value);
 }
 
 as::serial_value read_string_b(std::istream& aStream) {
