@@ -156,8 +156,19 @@ as::serial_value convert_element(const element& aElement) {
 	}
 
 	// Element is an object
-	//! \todo Implement object
-	return as::serial_value();
+	as::serial_value tmp;
+	as::serial_value::object_t& object = tmp.set_object();
+	if(! aElement.body.empty()) {
+		//! \todo Handle body
+	}
+	for(const auto& i : aElement.attributes) {
+		object.emplace(i.first, as::serial_value(i.second));
+	}
+	for(const auto& i : aElement.elements) {
+		//! \todo Handle for name conflicts
+		object.emplace(i.name, convert_element(i));
+	}
+	return tmp;
 }
 
 namespace as {
