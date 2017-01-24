@@ -140,8 +140,17 @@ as::serial_value read_array_b(std::istream& aStream) {
 }
 
 as::serial_value read_object_b(std::istream& aStream) {
-	//! \todo Implement
-	return as::serial_value();
+	uint16_t size;
+	aStream.read(reinterpret_cast<char*>(&size), 2);
+	as::serial_value value;
+	as::serial_value::object_t& object = value.set_object();
+	for(uint16_t i = 0; i < size; ++i) {
+		object.emplace(
+			read_string_b(aStream).get_string(),
+			read_unknown_b(aStream)
+		);
+	}
+	return value;
 }
 
 as::serial_value read_unknown_b(std::istream& aStream) {
