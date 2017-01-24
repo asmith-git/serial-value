@@ -132,7 +132,6 @@ element read_element(std::istream& aStream) {
 
 as::serial_value convert_element(const element& aElement) {
 	if(aElement.name == ASMITH_SERIAL_XML) {
-		//! \todo Implement
 		return as::serial_value();
 	}
 
