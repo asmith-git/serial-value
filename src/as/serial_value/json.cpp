@@ -16,7 +16,7 @@
 #include <sstream>
 #include "as/serial_value/json.hpp"
 
-#define ASMITH_SERIAL_PTR "SERIAL_VALUE_PTR="
+#define ASMITH_SERIAL_PTR "as::serial_value::pointer_t="
 
 void write_value(std::ostream& aStream, const as::serial_value& aValue) {
 	switch (aValue.get_type()) {
