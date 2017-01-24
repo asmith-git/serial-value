@@ -71,15 +71,57 @@ void write_value(std::ostream& aStream, const as::serial_value& aValue) {
 	}
 }
 
+as::serial_value read_unknown(std::istream&);
+
+as::serial_value read_null(std::istream& aStream) {
+	as::serial_value tmp;
+	//! \todo Implement
+	return tmp;
+}
+
+as::serial_value read_bool(std::istream& aStream) {
+	as::serial_value tmp;
+	//! \todo Implement
+	return tmp;
+}
+
+as::serial_value read_number(std::istream& aStream) {
+	as::serial_value tmp;
+	//! \todo Implement
+	return tmp;
+}
+
+as::serial_value read_string(std::istream& aStream) {
+	as::serial_value tmp;
+	//! \todo Implement
+	return tmp;
+}
+
+as::serial_value read_array(std::istream& aStream) {
+	as::serial_value tmp;
+	//! \todo Implement
+	return tmp;
+}
+
+as::serial_value read_object(std::istream& aStream) {
+	as::serial_value tmp;
+	//! \todo Implement
+	return tmp;
+}
+
+as::serial_value read_unknown(std::istream& aStream) {
+	as::serial_value tmp;
+	//! \todo Implement
+	return tmp;
+}
+
 namespace as {
 	void serialise_json(std::ostream& aStream, const serial_value& aValue) {
 		write_value(aStream, aValue);
 	}
 
 	serial_value deserialise_json(std::istream& aStream) {
-		serial_value tmp;
-		//! \todo Implement
-		return tmp;
+		return read_unknown(aStream);
 	}
 
 }
