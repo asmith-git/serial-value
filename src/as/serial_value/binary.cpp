@@ -189,7 +189,7 @@ as::serial_value read_unknown_b(std::istream& aStream) {
 		return read_float_b(aStream);
 		break;
 	case as::serial_value::POINTER_T:
-		return read_pointer_t(aStream);
+		return read_pointer_b(aStream);
 		break;
 	case as::serial_value::STRING_T:
 		return read_string_b(aStream);
