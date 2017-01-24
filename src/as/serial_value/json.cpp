@@ -13,7 +13,10 @@
 // limitations under the License.
 
 #include <cctype>
+#include <sstream>
 #include "as/serial_value/json.hpp"
+
+#define ASMITH_SERIAL_PTR "SERIAL_VALUE_PTR="
 
 void write_value(std::ostream& aStream, const as::serial_value& aValue) {
 	switch (aValue.get_type()) {
@@ -36,8 +39,7 @@ void write_value(std::ostream& aStream, const as::serial_value& aValue) {
 		aStream << aValue.get_float();
 		break;
 	case as::serial_value::POINTER_T:
-		//! \todo Implement
-		aStream << "null";
+		aStream << '"' << ASMITH_SERIAL_PTR << aValue.get_pointer() << '"';
 		break;
 	case as::serial_value::STRING_T:
 		aStream << '"' << aValue.get_string() << '"';
@@ -134,7 +136,17 @@ as::serial_value read_string(std::istream& aStream) {
 		str += c;
 		aStream >> c;
 	}
+	// The string is a char
 	if(str.size() == 1) return as::serial_value(str[0]);
+
+	// If the string is a pointer
+	if(str.find_first_of(ASMITH_SERIAL_PTR) == 0) {
+		std::stringstream ss;
+		ss << str.substr(strlen(ASMITH_SERIAL_PTR));
+		as::serial_value::pointer_t ptr;
+		ss >> ptr;
+		return as::serial_value(ptr);
+	}
 	return tmp;
 }
 
