@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cctype>
 #include "as/serial_value/json.hpp"
 
 void write_value(std::ostream& aStream, const as::serial_value& aValue) {
@@ -71,6 +72,14 @@ void write_value(std::ostream& aStream, const as::serial_value& aValue) {
 	}
 }
 
+void ignore_whitespace(std::istream& aStream) {
+	char c = aStream.peek();
+	while(std::isspace(c)) {
+		aStream >> c;
+		c = aStream.peek();
+	}
+}
+
 as::serial_value read_unknown(std::istream&);
 
 as::serial_value read_null(std::istream& aStream) {
@@ -125,7 +134,8 @@ as::serial_value read_object(std::istream& aStream) {
 }
 
 as::serial_value read_unknown(std::istream& aStream) {
-	//! \todo Ignore whitespace
+	ignore_whitespace(aStream);
+
 	switch(aStream.peek())
 	{
 	case 'n':
