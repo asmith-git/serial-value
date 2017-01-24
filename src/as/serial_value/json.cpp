@@ -14,10 +14,66 @@
 
 #include "as/serial_value/json.hpp"
 
+void write_value(std::ostream& aStream, const as::serial_value& aValue) {
+	switch (aValue.get_type()) {
+	case as::serial_value::NULL_T:
+		aStream << "null";
+		break;
+	case as::serial_value::CHAR_T:
+		aStream << '"' << aValue.get_char() << "'";
+		break;
+	case as::serial_value::BOOL_T:
+		aStream << aValue.get_bool() ? "true" : "false";
+		break;
+	case as::serial_value::UNSIGNED_T:
+		aStream << aValue.get_unsigned();
+		break;
+	case as::serial_value::SIGNED_T:
+		aStream << aValue.get_signed();
+		break;
+	case as::serial_value::FLOAT_T:
+		aStream << aValue.get_float();
+		break;
+	case as::serial_value::POINTER_T:
+		//! \todo Implement
+		aStream << "null";
+		break;
+	case as::serial_value::STRING_T:
+		aStream << '"' << aValue.get_string() << '"';
+		break;
+	case as::serial_value::ARRAY_T:
+		{
+			aStream << '[';
+			const as::serial_value::array_t& tmp = aValue.get_array();
+			const size_t s = tmp.size();
+			for(size_t i = 0; i < s; ++i) {
+				write_value(aStream, tmp[i]);
+				if(i + 1 != s) aStream << ',';
+			}
+			aStream << ']';
+		}
+		break;
+	case as::serial_value::OBJECT_T:
+		{
+			aStream << '[';
+			const as::serial_value::object_t& tmp = aValue.get_object();
+			const auto end = tmp.end();
+			for(auto i = tmp.begin(); i != end; ++i) {
+				aStream << '"' << i->first << '"' << ':';
+				write_value(aStream, i->second);
+				auto j = i;
+				++j;
+				if(j != end) aStream << ',';
+			}
+			aStream << ']';
+		}
+		break;
+	}
+}
+
 namespace as {
 	void serialise_json(std::ostream& aStream, const serial_value& aValue) {
-		//! \todo Implement
-
+		write_value(aStream, aValue);
 	}
 
 	serial_value deserialise_json(std::istream& aStream) {
