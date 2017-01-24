@@ -96,6 +96,12 @@ as::serial_value read_null_b(std::istream& aStream) {
 	return as::serial_value();
 }
 
+as::serial_value read_char_b(std::istream& aStream) {
+	as::serial_value::char_t value;
+	aStream.read(reinterpret_cast<char*>(&value), sizeof(as::serial_value::char_t));
+	return as::serial_value(value);
+}
+
 as::serial_value read_bool_b(std::istream& aStream) {
 	as::serial_value::bool_t value;
 	aStream.read(reinterpret_cast<char*>(&value), sizeof(as::serial_value::bool_t));
@@ -117,6 +123,12 @@ as::serial_value read_signed_b(std::istream& aStream) {
 as::serial_value read_float_b(std::istream& aStream) {
 	as::serial_value::float_t value;
 	aStream.read(reinterpret_cast<char*>(&value), sizeof(as::serial_value::float_t));
+	return as::serial_value(value);
+}
+
+as::serial_value read_pointer_b(std::istream& aStream) {
+	as::serial_value::pointer_t value;
+	aStream.read(reinterpret_cast<char*>(&value), sizeof(as::serial_value::pointer_t));
 	return as::serial_value(value);
 }
 
