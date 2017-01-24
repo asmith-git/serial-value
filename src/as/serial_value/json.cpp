@@ -110,12 +110,29 @@ as::serial_value read_bool(std::istream& aStream) {
 }
 
 as::serial_value read_number(std::istream& aStream) {
-	as::serial_value::float_t tmp;
-	aStream >> tmp;
-	return as::serial_value(tmp);
+	auto pos = aStream.tellg();
+	char c;
+	aStream >> c;
+	if(c != '"') {
+		aStream.seekg(pos);
+		throw std::runtime_error("as::deserialise_json : Expected string to begin with '\"'");
+	}
+	as::serial_value tmp;
+	as::serial_value::string_t& str = tmp.set_string();
+	aStream >> c;
+	while(c != '"') {
+		if(aStream.eof()) {
+			aStream.seekg(pos);
+			throw std::runtime_error("as::deserialise_json : Expected string to end with'\"'");
+		}
+		str += c;
+		aStream >> c;
+	}
+	return tmp;
 }
 
 as::serial_value read_string(std::istream& aStream) {
+	const auto pos = aStream.tellg();
 	as::serial_value tmp;
 	//! \todo Implement
 	return tmp;
