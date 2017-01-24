@@ -110,6 +110,12 @@ as::serial_value read_bool(std::istream& aStream) {
 }
 
 as::serial_value read_number(std::istream& aStream) {
+	as::serial_value::float_t tmp;
+	aStream >> tmp;
+	return as::serial_value(tmp);
+}
+
+as::serial_value read_string(std::istream& aStream) {
 	auto pos = aStream.tellg();
 	char c;
 	aStream >> c;
@@ -128,13 +134,6 @@ as::serial_value read_number(std::istream& aStream) {
 		str += c;
 		aStream >> c;
 	}
-	return tmp;
-}
-
-as::serial_value read_string(std::istream& aStream) {
-	const auto pos = aStream.tellg();
-	as::serial_value tmp;
-	//! \todo Implement
 	return tmp;
 }
 
