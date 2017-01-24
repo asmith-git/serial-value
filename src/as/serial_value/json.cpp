@@ -110,9 +110,36 @@ as::serial_value read_object(std::istream& aStream) {
 }
 
 as::serial_value read_unknown(std::istream& aStream) {
-	as::serial_value tmp;
-	//! \todo Implement
-	return tmp;
+	//! \todo Ignore whitespace
+	switch(aStream.peek())
+	{
+	case 'n':
+		return read_null(aStream);
+	case 't':
+	case 'f':
+		return read_bool(aStream);
+	case '-':
+	case '0':
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+	case '5':
+	case '6':
+	case '7':
+	case '8':
+	case '9':
+		return read_number(aStream);
+	case '"':
+		return read_string(aStream);
+	case '[':
+		return read_array(aStream);
+	case '{':
+		return read_object(aStream);
+	default:
+		throw std::runtime_error("as::deserialise_json : Could not determine type of JSON value");
+		break;
+	}
 }
 
 namespace as {
