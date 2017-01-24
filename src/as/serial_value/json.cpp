@@ -85,9 +85,19 @@ as::serial_value read_null(std::istream& aStream) {
 }
 
 as::serial_value read_bool(std::istream& aStream) {
-	as::serial_value tmp;
-	//! \todo Implement
-	return tmp;
+	const auto pos = aStream.tellg();
+	char tmp[4];
+	aStream.read(tmp, 4);
+	const bool t = memcmp(tmp, "true", 4) == 0;
+	const bool f = memcmp(tmp, "fals", 4) == 0;
+	if(t) {
+		return as::serial_value(true);
+	}else if(f) {
+		aStream >> tmp[0];
+		if(tmp[0] == 'e') return as::serial_value(false);
+	}
+	aStream.seekg(pos);
+	throw std::runtime_error("as::deserialise_json : Expected 'true' or 'false'");
 }
 
 as::serial_value read_number(std::istream& aStream) {
