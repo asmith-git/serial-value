@@ -130,7 +130,7 @@ element read_element(std::istream& aStream) {
 	return element();
 }
 
-as::serial_value convert_element(element& aElement) {
+as::serial_value convert_element(const element& aElement) {
 	if(aElement.name == ASMITH_SERIAL_XML) {
 		//! \todo Implement
 		return as::serial_value();
@@ -140,15 +140,19 @@ as::serial_value convert_element(element& aElement) {
 	size_t contiguousNames = 0;
 	const size_t eCount = aElement.elements.size();
 	for(size_t i = 0; i < eCount; ++i) if(aElement.elements[i].name == std::to_string(i)) ++contiguousNames;
-	if(contiguousNames > 0 && contiguousNames == eCount) {
-		//! \todo Implement
-		return as::serial_value();
+	if(eCount > 0 && contiguousNames == eCount) {
+		// Element is an array
+		as::serial_value tmp;
+		as::serial_value::array_t& array_ = tmp.set_array();
+		for(size_t i = 0; i < eCount; ++i) array_.push_back(convert_element(aElement.elements[i]));
+		return tmp;
 	}
 
 	// Check if value
 	if(aElement.elements.empty() && aElement.attributes.empty()) {
-		//! \todo Implement
-		return as::serial_value();
+		// Element is a value
+		if(aElement.body.empty()) return as::serial_value();
+		else return as::serial_value(aElement.body);
 	}
 
 	// Element is an object
