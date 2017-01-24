@@ -138,8 +138,33 @@ as::serial_value read_string(std::istream& aStream) {
 }
 
 as::serial_value read_array(std::istream& aStream) {
+	auto pos = aStream.tellg();
+	char c;
+	aStream >> c;
+	if (c != '[') {
+		aStream.seekg(pos);
+		throw std::runtime_error("as::deserialise_json : Expected array to begin with '['");
+	}
 	as::serial_value tmp;
-	//! \todo Implement
+	as::serial_value::array_t& values = tmp.set_array();
+	c = aStream.peek();
+	while(c != ']') {
+		ignore_whitespace(aStream);
+		if(c == ',') aStream >> c;
+
+		try {
+			values.push_back(read_unknown(aStream));
+		}catch (std::exception& e) {
+			aStream.seekg(pos);
+			throw e;
+		}
+
+		if(aStream.eof()) {
+			aStream.seekg(pos);
+			throw std::runtime_error("as::deserialise_json : Expected array to end with']'");
+		}
+	}
+	aStream >> c;
 	return tmp;
 }
 
