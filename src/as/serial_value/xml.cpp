@@ -125,15 +125,23 @@ struct element {
 	std::vector<element> elements;
 };
 
+element read_element(std::istream& aStream) {
+	//! \todo Implement
+	return element();
+}
+
+as::serial_value convert_element(element& aElement) {
+	//! \todo Implement
+	return as::serial_value();
+}
+
 namespace as {
 	void serialise_xml(std::ostream& aStream, const serial_value& aValue) {
 		write_element(aStream, ASMITH_SERIAL_XML, aValue);
 	}
 
 	serial_value deserialise_xml(std::istream& aStream) {
-		serial_value tmp;
-		//! \todo Implement
-		return tmp;
+		return convert_element(read_element(aStream));
 	}
 
 }
