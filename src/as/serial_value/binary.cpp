@@ -154,8 +154,43 @@ as::serial_value read_object_b(std::istream& aStream) {
 }
 
 as::serial_value read_unknown_b(std::istream& aStream) {
-	//! \todo Implement
-	return as::serial_value();
+	uint8_t type;
+	aStream.read(reinterpret_cast<char*>(&type), 1);
+
+	switch(type) {
+	case as::serial_value::NULL_T:
+		return read_null_b(aStream);
+		break;
+	case as::serial_value::CHAR_T:
+		return read_char_b(aStream);
+		break;
+	case as::serial_value::BOOL_T:
+		return read_bool_b(aStream);
+		break;
+	case as::serial_value::UNSIGNED_T:
+		return read_unsigned_b(aStream);
+		break;
+	case as::serial_value::SIGNED_T:
+		return read_signed_b(aStream);
+		break;
+	case as::serial_value::FLOAT_T:
+		return read_float_b(aStream);
+		break;
+	case as::serial_value::POINTER_T:
+		return read_pointer_t(aStream);
+		break;
+	case as::serial_value::STRING_T:
+		return read_string_b(aStream);
+		break;
+	case as::serial_value::ARRAY_T:
+		return read_array_b(aStream);
+		break;
+	case as::serial_value::OBJECT_T:
+		return read_object_b(aStream);
+		break;
+	default:
+		throw std::runtime_error("as::deserialise_binary : Could not determine type of value");
+	}
 }
 
 namespace as {
