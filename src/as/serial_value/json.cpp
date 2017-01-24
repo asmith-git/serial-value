@@ -74,9 +74,14 @@ void write_value(std::ostream& aStream, const as::serial_value& aValue) {
 as::serial_value read_unknown(std::istream&);
 
 as::serial_value read_null(std::istream& aStream) {
-	as::serial_value tmp;
-	//! \todo Implement
-	return tmp;
+	const auto pos = aStream.tellg();
+	char tmp[4];
+	aStream.read(tmp, 4);
+	if(memcmp(tmp, "null", 4) != 0) {
+		aStream.seekg(pos);
+		throw std::runtime_error("as::deserialise_json : Expected 'null'");
+	}
+	return as::serial_value();
 }
 
 as::serial_value read_bool(std::istream& aStream) {
