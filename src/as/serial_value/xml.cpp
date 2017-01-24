@@ -131,10 +131,6 @@ element read_element(std::istream& aStream) {
 }
 
 as::serial_value convert_element(const element& aElement) {
-	if(aElement.name == ASMITH_SERIAL_XML) {
-		return as::serial_value();
-	}
-
 	// Check if array
 	size_t contiguousNames = 0;
 	const size_t eCount = aElement.elements.size();
