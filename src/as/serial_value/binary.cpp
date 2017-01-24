@@ -157,8 +157,9 @@ as::serial_value read_object_b(std::istream& aStream) {
 	as::serial_value value;
 	as::serial_value::object_t& object = value.set_object();
 	for(uint16_t i = 0; i < size; ++i) {
+		const std::string name = read_string_b(aStream).get_string();
 		object.emplace(
-			read_string_b(aStream).get_string(),
+			name,
 			read_unknown_b(aStream)
 		);
 	}
