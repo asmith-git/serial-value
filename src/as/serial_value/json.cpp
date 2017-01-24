@@ -101,9 +101,9 @@ as::serial_value read_bool(std::istream& aStream) {
 }
 
 as::serial_value read_number(std::istream& aStream) {
-	as::serial_value tmp;
-	//! \todo Implement
-	return tmp;
+	as::serial_value::float_t tmp;
+	aStream >> tmp;
+	return as::serial_value(tmp);
 }
 
 as::serial_value read_string(std::istream& aStream) {
