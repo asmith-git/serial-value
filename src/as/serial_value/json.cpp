@@ -55,7 +55,7 @@ void write_value(std::ostream& aStream, const as::serial_value& aValue) {
 		break;
 	case as::serial_value::OBJECT_T:
 		{
-			aStream << '[';
+			aStream << '{';
 			const as::serial_value::object_t& tmp = aValue.get_object();
 			const auto end = tmp.end();
 			for(auto i = tmp.begin(); i != end; ++i) {
@@ -65,7 +65,7 @@ void write_value(std::ostream& aStream, const as::serial_value& aValue) {
 				++j;
 				if(j != end) aStream << ',';
 			}
-			aStream << ']';
+			aStream << '}';
 		}
 		break;
 	}
