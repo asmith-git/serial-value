@@ -23,28 +23,28 @@ bool write_attribute(std::ostream& aStream, const std::string& aName, const as::
 	//! \todo Remove chars illegal in XML
 	switch (aValue.get_type()) {
 	case as::serial_value::NULL_T:
-		aStream << aName << '=' << '"' << "null" << '"';
+		aStream << ' ' << aName << '=' << '"' << "null" << '"';
 		return true;
 	case as::serial_value::CHAR_T:
-		aStream << aName << '=' << '"' << aValue.get_char() << '"';
+		aStream << ' ' << aName << '=' << '"' << aValue.get_char() << '"';
 		return true;
 	case as::serial_value::BOOL_T:
-		aStream << aName << '=' << '"' << (aValue.get_bool() ? "true" : "false") << '"';
+		aStream << ' ' << aName << '=' << '"' << (aValue.get_bool() ? "true" : "false") << '"';
 		return true;
 	case as::serial_value::UNSIGNED_T:
-		aStream << aName << '=' << '"' << aValue.get_unsigned() << '"';
+		aStream << ' ' << aName << '=' << '"' << aValue.get_unsigned() << '"';
 		return true;
 	case as::serial_value::SIGNED_T:
-		aStream << aName << '=' << '"' << aValue.get_signed() << '"';
+		aStream << ' ' << aName << '=' << '"' << aValue.get_signed() << '"';
 		return true;
 	case as::serial_value::FLOAT_T:
-		aStream << aName << '=' << '"' << aValue.get_float() << '"';
+		aStream << ' ' << aName << '=' << '"' << aValue.get_float() << '"';
 		return true;
 	case as::serial_value::POINTER_T:
-		aStream << aName << '=' << '"' << ASMITH_SERIAL_PTR  << aValue.get_pointer() << '"';
+		aStream << ' ' << aName << '=' << '"' << ASMITH_SERIAL_PTR  << aValue.get_pointer() << '"';
 		return true;
 	case as::serial_value::STRING_T:
-		aStream << aName << '=' << '"' << aValue.get_string() << '"';
+		aStream << ' ' << aName << '=' << '"' << aValue.get_string() << '"';
 		return true;
 	default:
 		return false;
