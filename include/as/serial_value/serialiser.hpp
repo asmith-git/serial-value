@@ -314,79 +314,28 @@ namespace as {
 		}
 	};
 
-	template<class T>
-	struct serialiser<std::map<std::string,T>, void> {
-		typedef const std::map<std::string,T>& serialise_t;
-		typedef std::map<std::string,T> deserialise_t;
-
-		static serial_value serialise(serialise_t aValue) {
-			serial_value tmp;
-			std::map<serial_value::string_t,serial_value>& values = tmp.set_object();
-			for(const auto& i : aValue) values.emplace(i.first, serialiser<T>::serialise(i.second));
-			return tmp;
-		}
-
-		static deserialise_t deserialise(const serial_value& aValue) {
-			const std::map<serial_value::string_t, serial_value>& values = aValue.get_object();
-			deserialise_t tmp;
-			for(const auto& i : values) tmp.emplace(i.first, serialiser<T>::deserialise(i.second));
-			return tmp;
-		}
-	};
-
-	template<class T>
-	struct serialiser<std::map<char, T>, void> {
-		typedef const std::map<char, T>& serialise_t;
-		typedef std::map<char, T> deserialise_t;
-
-		static serial_value serialise(serialise_t aValue) {
-			serial_value tmp;
-			serial_value::object_t& values = tmp.set_object();
-			for(const auto& i : aValue) values.emplace(serial_value::string_t() + i.first, serialiser<T>::serialise(i.second));
-			return tmp;
-		}
-
-		static deserialise_t deserialise(const serial_value& aValue) {
-			const serial_value::object_t& values = aValue.get_object();
-			deserialise_t tmp;
-			for(const auto& i : values) tmp.emplace(i.first[0], serialiser<T>::deserialise(i.second));
-			return tmp;
-		}
-	};
-
 	template<class K, class T>
-	struct serialiser<std::map<K,T>, typename std::enable_if<
-		std::is_same<T, uint8_t>::value ||
-		std::is_same<T, uint16_t>::value ||
-		std::is_same<T, uint32_t>::value ||
-		std::is_same<T, uint64_t>::value ||
-		std::is_same<T, int8_t>::value ||
-		std::is_same<T, int16_t>::value ||
-		std::is_same<T, int32_t>::value ||
-		std::is_same<T, int64_t>::value ||
-		std::is_same<T, float>::value ||
-		std::is_same<T, double>::value
-	>::type> {
+	struct serialiser<std::map<K,T>, typename std::enable_if<string_serialiser<K>::CONVERTABLE, void>::type> {
 		typedef const std::map<K,T>& serialise_t;
 		typedef std::map<K,T> deserialise_t;
 
 		static serial_value serialise(serialise_t aValue) {
 			serial_value tmp;
 			serial_value::object_t& values = tmp.set_object();
-			for(const auto& i : aValue) values.emplace(std::to_string(i.first), serialiser<T>::serialise(i.second));
+			for(const auto& i : aValue) values.emplace(string_serialiser<K>::serialise(i.first), serialiser<T>::serialise(i.second));
 			return tmp;
 		}
 
 		static deserialise_t deserialise(const serial_value& aValue) {
 			const serial_value::object_t& values = aValue.get_object();
 			deserialise_t tmp;
-			for(const auto& i : values) tmp.emplace(static_cast<K>(std::stod(i.first)), serialiser<T>::deserialise(i.second));
+			for(const auto& i : values) tmp.emplace(string_serialiser<K>::deserialise(i.first), serialiser<T>::deserialise(i.second));
 			return tmp;
 		}
 	};
 
 	template<class K, class T>
-	struct serialiser<std::map<K,T>, void> {
+	struct serialiser<std::map<K,T>, typename std::enable_if<! string_serialiser<K>::CONVERTABLE, void>::type> {
 		typedef const std::map<K,T>& serialise_t;
 		typedef std::map<K,T> deserialise_t;
 
