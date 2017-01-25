@@ -141,7 +141,6 @@ void close_closing_tag(std::istream& aStream, element& e) {
 }
 
 void read_closing_name(std::istream& aStream, element& e) {
-	ignore_whitespace_x(aStream);
 	char c;
 	ignore_whitespace_x(aStream);
 	c = aStream.peek();
