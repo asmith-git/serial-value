@@ -125,9 +125,89 @@ struct element {
 	std::vector<element> elements;
 };
 
-element read_element(std::istream& aStream) {
+void ignore_whitespace_x(std::istream& aStream) {
+	char c = aStream.peek();
+	while (std::isspace(c)) {
+		aStream >> c;
+		c = aStream.peek();
+	}
+}
+
+void close_closing_tag(std::istream& aStream, element& e) {
 	//! \todo Implement
-	return element();
+}
+
+void read_closing_name(std::istream& aStream, element& e) {
+	//! \todo Implement
+	close_closing_tag(aStream, e);
+}
+
+void open_closing_tag(std::istream& aStream, element& e) {
+	//! \todo Implement
+	read_closing_name(aStream, e);
+}
+
+void read_elements(std::istream& aStream, element& e) {
+	//! \todo Implement
+}
+
+
+void read_body(std::istream& aStream, element& e) {
+	//! \todo Implement
+}
+
+void close_opening_tag(std::istream&, element&);
+
+void read_attribute(std::istream& aStream, element& e) {
+	std::string name;
+	std::string value;
+
+	//! \todo Read name
+
+	//! \todo  Read value
+
+	// Next state
+	e.attributes.emplace(name, value);
+	close_opening_tag(aStream, e);
+}
+
+void close_opening_tag(std::istream& aStream, element& e) {
+	ignore_whitespace_x(aStream);
+	char c = aStream.peek();
+	if(c == '/') {
+		// End element
+		aStream >> c;
+		aStream >> c;
+		if(c != '>') throw std::runtime_error("as::deserialise_xml : Expected closing tag to end with '>'");
+	}else if (c == '>') {
+		// Next state
+		read_body(aStream, e);
+	}else {
+		read_attribute(aStream, e);
+	}
+}
+
+void read_opening_tag_name(std::istream& aStream, element& e) {
+	ignore_whitespace_x(aStream);
+	char c;
+	ignore_whitespace_x(aStream);
+	c = aStream.peek();
+	while(c != '>' && c != '/' && !std::isspace(c)) {
+		e.name += c;
+		aStream >> c;
+		c = aStream.peek();
+	}
+	// Next state
+	close_opening_tag(aStream, e);
+}
+
+void open_opening_tag(std::istream& aStream, element& e) {
+	ignore_whitespace_x(aStream);
+	char c;
+	aStream >> c;
+	if(c != '<') throw std::runtime_error("as::deserialise_xml : Expected opening tag to begin with '<'");
+	// Next state
+	read_opening_tag_name(aStream, e);
 }
 
 as::serial_value convert_element(const element& aElement) {
@@ -172,7 +252,9 @@ namespace as {
 	}
 
 	serial_value deserialise_xml(std::istream& aStream) {
-		return convert_element(read_element(aStream));
+		element e;
+		open_opening_tag(aStream, e);
+		return convert_element(e);
 	}
 
 }
