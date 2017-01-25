@@ -30,7 +30,130 @@ namespace as {
 		static deserialise_t deserialise(const serial_value&);
 	};
 
-	// -- Specialisations
+	// -- Helper functions
+
+	template<class T, class ENABLE = void>
+	struct string_serialiser {
+		typedef typename serialiser<T>::serialise_t serialise_t;
+		typedef typename serialiser<T>::deserialise_t deserialise_t;
+
+		static serial_value::string_t serialise(serialise_t);
+		static deserialise_t deserialise(const serial_value::string_t&);
+	};
+
+	// -- Helper Specialisations
+
+	template<class T>
+	struct string_serialiser<T, typename std::enable_if<
+		std::is_same<T, uint8_t>::value ||
+		std::is_same<T, uint16_t>::value ||
+		std::is_same<T, uint32_t>::value ||
+		std::is_same<T, uint64_t>::value
+	>::type> {
+		typedef T serialise_t;
+		typedef T deserialise_t;
+		enum{ CONVERTABLE = 0 };
+
+		static serial_value::string_t serialise(serialise_t aValue) {
+			return std::to_string(aValue);
+		}
+
+		static deserialise_t deserialise(const serial_value::string_t& aValue) {
+			return static_cast<T>(std::stoull(aValue));
+		}
+	};
+
+	template<class T>
+	struct string_serialiser<T, typename std::enable_if<
+		std::is_same<T, int8_t>::value ||
+		std::is_same<T, int16_t>::value ||
+		std::is_same<T, int32_t>::value ||
+		std::is_same<T, int64_t>::value
+	>::type> {
+		typedef T serialise_t;
+		typedef T deserialise_t;
+		enum { CONVERTABLE = 1 };
+
+		static serial_value::string_t serialise(serialise_t aValue) {
+			return std::to_string(aValue);
+		}
+
+		static deserialise_t deserialise(const serial_value::string_t& aValue) {
+			return static_cast<T>(std::stoll(aValue));
+		}
+	};
+
+	template<class T>
+	struct string_serialiser<T, typename std::enable_if<
+		std::is_same<T, float>::value ||
+		std::is_same<T, double>::value
+	>::type> {
+		typedef T serialise_t;
+		typedef T deserialise_t;
+		enum { CONVERTABLE = 1 };
+
+		static serial_value::string_t serialise(serialise_t aValue) {
+			return std::to_string(aValue);
+		}
+
+		static deserialise_t deserialise(const serial_value::string_t& aValue) {
+			return static_cast<T>(std::stod(aValue));
+		}
+	};
+
+	template<>
+	struct string_serialiser<char, void> {
+		typedef char serialise_t;
+		typedef char deserialise_t;
+		enum { CONVERTABLE = 1 };
+
+		static serial_value::string_t serialise(serialise_t aValue) {
+			return serial_value::string_t() + aValue;
+		}
+
+		static deserialise_t deserialise(const serial_value::string_t& aValue) {
+			return aValue[0];
+		}
+	};
+
+	template<>
+	struct string_serialiser<bool, void> {
+		typedef bool serialise_t;
+		typedef bool deserialise_t;
+		enum { CONVERTABLE = 1 };
+
+		static serial_value::string_t serialise(serialise_t aValue) {
+			return aValue ? "true" : "false";
+		}
+
+		static deserialise_t deserialise(const serial_value::string_t& aValue) {
+			if(aValue == "true") {
+				return true;
+			}else if (aValue == "false") {
+				return false;
+			}else {
+				throw std::runtime_error("as::string_serialiser::deserialise : String cannot be converted to bool");
+			}
+		}
+	};
+
+
+	template<>
+	struct string_serialiser<serial_value::string_t, void> {
+		typedef const serial_value::string_t& serialise_t;
+		typedef const serial_value::string_t& deserialise_t;
+		enum { CONVERTABLE = 1 };
+
+		static serial_value::string_t serialise(serialise_t aValue) {
+			return aValue;
+		}
+
+		static deserialise_t deserialise(const serial_value::string_t& aValue) {
+			return aValue;
+		}
+	};
+
+	// -- Serialiser Specialisations
 
 	template<>
 	struct serialiser<char, void> {
