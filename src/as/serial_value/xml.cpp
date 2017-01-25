@@ -297,6 +297,8 @@ namespace as {
 	}
 
 	serial_value deserialise_xml(std::istream& aStream) {
+		//! \todo Handle XML header
+		//! \todo Handle XML comments
 		element e;
 		open_opening_tag(aStream, e);
 		return convert_element(e);
