@@ -148,12 +148,42 @@ void open_closing_tag(std::istream& aStream, element& e) {
 }
 
 void read_elements(std::istream& aStream, element& e) {
-	//! \todo Implement
+	const auto pos = aStream.tellg();
+	char c;
+	c = aStream.peek();
+	if(c != '<') throw std::runtime_error("as::deserialise_xml : Expected element to begin with '<'");
+	c = aStream.peek();
+	aStream.seekg(pos);
+	if(c == '/') {
+		// Closing tag of e
+		aStream.seekg(pos);
+	}else {
+		element e2;
+		open_opening_tag(aStream, e2);
+		e.elements.push_back(e2);
+		// Next state
+		read_elements(aStream, e);
+	}
 }
 
 
 void read_body(std::istream& aStream, element& e) {
-	//! \todo Implement
+	ignore_whitespace_x(aStream);
+	char c;
+
+	c = aStream.peek();
+	if(c == '<') {
+		read_elements(aStream, e);
+	}else {
+		 while (c != '<') {
+			 e.body += c;
+			 aStream >> c;
+			 c = aStream.peek();
+		 }
+	}
+
+	// Next state
+	open_closing_tag(aStream, e);
 }
 
 void close_opening_tag(std::istream&, element&);
