@@ -156,7 +156,6 @@ void read_closing_name(std::istream& aStream, element& e) {
 }
 
 void open_closing_tag(std::istream& aStream, element& e) {
-	read_closing_name(aStream, e);
 	char c;
 	aStream >> c;
 	if(c != '<') throw std::runtime_error("as::deserialise_xml : Expected closing tag to begin with '</'");
@@ -174,11 +173,10 @@ void read_elements(std::istream& aStream, element& e) {
 	c = aStream.peek();
 	if(c != '<') throw std::runtime_error("as::deserialise_xml : Expected element to begin with '<'");
 	c = aStream.peek();
+	aStream >> c;
+	c = aStream.peek();
 	aStream.seekg(pos);
-	if(c == '/') {
-		// Closing tag of e
-		aStream.seekg(pos);
-	}else {
+	if(c != '/') {
 		element e2;
 		open_opening_tag(aStream, e2);
 		e.elements.push_back(e2);
@@ -244,8 +242,9 @@ void close_opening_tag(std::istream& aStream, element& e) {
 		// End element
 		aStream >> c;
 		aStream >> c;
-		if(c != '>') throw std::runtime_error("as::deserialise_xml : Expected closing tag to end with '>'");
-	}else if (c == '>') {
+		if(c != '>') throw std::runtime_error("as::deserialise_xml : Expected opening tag to end with '>'");
+	}else if(c == '>') {
+		aStream >> c;
 		// Next state
 		read_body(aStream, e);
 	}else {
