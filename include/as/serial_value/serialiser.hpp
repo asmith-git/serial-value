@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <array>
 #include <deque>
 #include <list>
 #include "serial_value.hpp"
@@ -253,6 +254,26 @@ namespace as {
 	};
 
 	// -- Container specialisations
+
+	template<class T, const size_t S>
+	struct serialiser<std::array<T,S>, void> {
+		typedef const std::array<T,S>& serialise_t;
+		typedef std::array<T,S> deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			serial_value tmp;
+			serial_value::array_t& values = tmp.set_array();
+			for(size_t i = 0; i < S; ++i) values.push_back(serialiser<T>::serialise(aValue[i]));
+			return tmp;
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			const serial_value::array_t& values = aValue.get_array();
+			deserialise_t tmp;
+			for(size_t i = 0; i < S; ++i) tmp[i] = serialiser<T>::deserialise(values[i]);
+			return tmp;
+		}
+	};
 
 	template<class T>
 	struct serialiser<std::vector<T>, void> {
