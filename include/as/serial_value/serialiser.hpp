@@ -255,6 +255,28 @@ namespace as {
 
 	// -- Container specialisations
 
+	template<class T, const class T2>
+	struct serialiser<std::pair<T,T2>, void> {
+		typedef const std::pair<T,T2>& serialise_t;
+		typedef std::pair<T,T2> deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			serial_value tmp;
+			serial_value::array_t& values = tmp.set_array();
+			values.push_back(serialiser<T>::serialise(aValue.first));
+			values.push_back(serialiser<T2>::serialise(aValue.second));
+			return tmp;
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			const serial_value::array_t& values = aValue.get_array();
+			return deserialise_t(
+				serialiser<T>::deserialise(values[0]),
+				serialiser<T>::deserialise(values[1])
+			);
+		}
+	};
+
 	template<class T, const size_t S>
 	struct serialiser<std::array<T,S>, void> {
 		typedef const std::array<T,S>& serialise_t;
