@@ -255,7 +255,6 @@ void close_opening_tag(std::istream& aStream, element& e) {
 }
 
 void read_opening_tag_name(std::istream& aStream, element& e) {
-	ignore_whitespace_x(aStream);
 	char c;
 	ignore_whitespace_x(aStream);
 	c = aStream.peek();
