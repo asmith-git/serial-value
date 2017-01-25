@@ -134,18 +134,40 @@ void ignore_whitespace_x(std::istream& aStream) {
 }
 
 void close_closing_tag(std::istream& aStream, element& e) {
-	//! \todo Implement
+	ignore_whitespace_x(aStream);
+	char c;
+	aStream >> c;
+	if(c != '>') throw std::runtime_error("as::deserialise_xml : Expected closing tag to end with '>'");
 }
 
 void read_closing_name(std::istream& aStream, element& e) {
-	//! \todo Implement
+	ignore_whitespace_x(aStream);
+	char c;
+	ignore_whitespace_x(aStream);
+	c = aStream.peek();
+	std::string name;
+	while(c != '>' && ! std::isspace(c)) {
+		name += c;
+		aStream >> c;
+		c = aStream.peek();
+	}
+	if(name != e.name) throw std::runtime_error("as::deserialise_xml : Expected closing tag to have same name as opening tag");
+	// Next state
 	close_closing_tag(aStream, e);
 }
 
 void open_closing_tag(std::istream& aStream, element& e) {
-	//! \todo Implement
+	read_closing_name(aStream, e);
+	char c;
+	aStream >> c;
+	if(c != '<') throw std::runtime_error("as::deserialise_xml : Expected closing tag to begin with '</'");
+	aStream >> c;
+	if(c != '/') throw std::runtime_error("as::deserialise_xml : Expected closing tag to begin with '</'");
+	// Next state
 	read_closing_name(aStream, e);
 }
+
+void open_opening_tag(std::istream&, element&);
 
 void read_elements(std::istream& aStream, element& e) {
 	const auto pos = aStream.tellg();
