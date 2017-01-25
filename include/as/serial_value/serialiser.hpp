@@ -211,6 +211,26 @@ namespace as {
 		}
 	};
 
+	template<class T>
+	struct serialiser<std::map<char, T>, void> {
+		typedef const std::map<char, T>& serialise_t;
+		typedef std::map<char, T> deserialise_t;
+
+		static serial_value serialise(serialise_t aValue) {
+			serial_value tmp;
+			serial_value::object_t& values = tmp.set_object();
+			for(const auto& i : aValue) values.emplace(serial_value::string_t() + i.first, serialiser<T>::serialise(i.second));
+			return tmp;
+		}
+
+		static deserialise_t deserialise(const serial_value& aValue) {
+			const serial_value::object_t& values = aValue.get_object();
+			deserialise_t tmp;
+			for(const auto& i : values) tmp.emplace(i.first[0], serialiser<T>::deserialise(i.second));
+			return tmp;
+		}
+	};
+
 	template<class K, class T>
 	struct serialiser<std::map<K,T>, void> {
 		typedef const std::map<K,T>& serialise_t;
