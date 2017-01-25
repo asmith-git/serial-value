@@ -161,10 +161,25 @@ void close_opening_tag(std::istream&, element&);
 void read_attribute(std::istream& aStream, element& e) {
 	std::string name;
 	std::string value;
+	char c;
 
-	//! \todo Read name
+	// Read name
+	ignore_whitespace_x(aStream);
+	aStream >> c;
+	while(c != '='){
+		name += c;
+		aStream >> c;
+	}
 
-	//! \todo  Read value
+	// Read value
+	ignore_whitespace_x(aStream);
+	aStream >> c;
+	if(c != '"') throw std::runtime_error("as::deserialise_xml : Expected attribute value to begin with '\"'");
+	aStream >> c;
+	while(c != '"') {
+		value += c;
+		aStream >> c;
+	}
 
 	// Next state
 	e.attributes.emplace(name, value);
