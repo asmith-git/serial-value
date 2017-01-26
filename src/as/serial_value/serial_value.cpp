@@ -537,8 +537,8 @@ namespace as {
 		\return A reference to the CHAR_T value.
 	*/
 	serial_value::char_t& serial_value::get_char() {
-		if(mType == CHAR_T) return mChar;
-		set_char() = const_cast<const serial_value*>(this)->get_char();
+		const char_t tmp = const_cast<const serial_value*>(this)->get_char();
+		set_char() = tmp;
 		return mChar;
 	}
 
@@ -548,8 +548,8 @@ namespace as {
 		\return A reference to the BOOL_T value.
 	*/
 	serial_value::bool_t& serial_value::get_bool() {
-		if(mType == BOOL_T) return mBool;
-		set_bool() = const_cast<const serial_value*>(this)->get_bool();
+		const bool_t tmp = const_cast<const serial_value*>(this)->get_bool();
+		set_bool() = tmp;
 		return mBool;
 	}
 	
@@ -559,8 +559,8 @@ namespace as {
 		\return A reference to the UNSIGNED_T value.
 	*/
 	serial_value::unsigned_t& serial_value::get_unsigned() {
-		if(mType == UNSIGNED_T) return mUnsigned;
-		set_unsigned() = const_cast<const serial_value*>(this)->get_unsigned();
+		const unsigned_t tmp = const_cast<const serial_value*>(this)->get_unsigned();
+		set_unsigned() = tmp;
 		return mUnsigned;
 	}
 		
@@ -570,8 +570,8 @@ namespace as {
 		\return A reference to the UNSIGNED_T value.
 	*/
 	serial_value::signed_t& serial_value::get_signed() {
-		if(mType == SIGNED_T) return mSigned;
-		set_signed() = const_cast<const serial_value*>(this)->get_signed();
+		const signed_t tmp = const_cast<const serial_value*>(this)->get_signed();
+		set_signed() = tmp;
 		return mSigned;
 	}
 			
@@ -581,8 +581,8 @@ namespace as {
 		\return A reference to the FLOAT_T value.
 	*/
 	serial_value::float_t& serial_value::get_float() {
-		if(mType == FLOAT_T) return mFloat;
-		set_float() = const_cast<const serial_value*>(this)->get_float();
+		const float_t tmp = const_cast<const serial_value*>(this)->get_float();
+		set_float() = tmp;
 		return mFloat;
 	}
 
@@ -592,8 +592,8 @@ namespace as {
 		\return A reference to the POINTER_T value.
 	*/
 	serial_value::pointer_t& serial_value::get_pointer() {
-		if(mType == POINTER_T) return mPointer;
-		set_pointer() = const_cast<const serial_value*>(this)->get_pointer();
+		const pointer_t tmp = const_cast<const serial_value*>(this)->get_pointer();
+		set_pointer() = tmp;
 		return mPointer;
 	}
 	
@@ -688,16 +688,39 @@ namespace as {
 		case POINTER_T:
 			return mPointer != nullptr;
 		case STRING_T:
-			if(
-				*mString == "1" || *mString == "y" || *mString == "Y" || *mString == "true" ||
-				*mString == "TRUE" || *mString == "True" || *mString == "yes" || *mString == "YES" ||
-				*mString == "Yes"
-			) return true;
-			else if(
-				*mString == "0" || *mString == "n" || *mString == "N" || *mString == "false" ||
-				*mString == "FALSE" || *mString == "False" || *mString == "no" || *mString == "NO" ||
-				*mString == "N0"
-			) return true;
+			{
+				static const auto strcmp_lowercase = [](const char* aPtr, const char* bPtr)->bool {
+					char a = *aPtr;
+					char b = *bPtr;
+					while(a != '\0') {
+						if(b == '\0') return false;
+						enum { DIF = 'a' - 'A' };
+						a = a >= 'a' && a <= 'z' ? a - DIF : a;
+						b = b >= 'a' && b <= 'z' ? b - DIF : b;
+						if(a != b) return false;
+						++aPtr;
+						++bPtr;
+						a = *aPtr;
+						b = *bPtr;
+					}
+					return b == '\0';
+				};
+				if (
+					strcmp_lowercase(mString->c_str(),"true") || 
+					strcmp_lowercase(mString->c_str(), "1") ||
+					strcmp_lowercase(mString->c_str(), "y") ||
+					strcmp_lowercase(mString->c_str(), "yes")
+				){
+					return true;
+				}else if(
+					strcmp_lowercase(mString->c_str(), "false") ||
+					strcmp_lowercase(mString->c_str(), "0") ||
+					strcmp_lowercase(mString->c_str(), "n") ||
+					strcmp_lowercase(mString->c_str(), "no")
+				){
+					return false;
+				}
+			}
 			break;
 		}
 		throw std::runtime_error("as::serial_value::get_bool : Type is not convertable to bool");
