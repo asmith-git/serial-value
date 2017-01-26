@@ -127,8 +127,8 @@ struct element {
 
 void ignore_whitespace_x(std::istream& aStream) {
 	char c = aStream.peek();
-	while (std::isspace(c)) {
-		aStream >> c;
+	while(std::isspace(c)) {
+		aStream.read(&c, 1);
 		c = aStream.peek();
 	}
 }
@@ -136,7 +136,7 @@ void ignore_whitespace_x(std::istream& aStream) {
 void close_closing_tag(std::istream& aStream, element& e) {
 	ignore_whitespace_x(aStream);
 	char c;
-	aStream >> c;
+	aStream.read(&c, 1);
 	if(c != '>') throw std::runtime_error("as::deserialise_xml : Expected closing tag to end with '>'");
 }
 
@@ -147,7 +147,7 @@ void read_closing_name(std::istream& aStream, element& e) {
 	std::string name;
 	while(c != '>' && ! std::isspace(c)) {
 		name += c;
-		aStream >> c;
+		aStream.read(&c, 1);
 		c = aStream.peek();
 	}
 	if(name != e.name) throw std::runtime_error("as::deserialise_xml : Expected closing tag to have same name as opening tag");
@@ -157,9 +157,9 @@ void read_closing_name(std::istream& aStream, element& e) {
 
 void open_closing_tag(std::istream& aStream, element& e) {
 	char c;
-	aStream >> c;
+	aStream.read(&c, 1);
 	if(c != '<') throw std::runtime_error("as::deserialise_xml : Expected closing tag to begin with '</'");
-	aStream >> c;
+	aStream.read(&c, 1);
 	if(c != '/') throw std::runtime_error("as::deserialise_xml : Expected closing tag to begin with '</'");
 	// Next state
 	read_closing_name(aStream, e);
@@ -173,7 +173,7 @@ void read_elements(std::istream& aStream, element& e) {
 	c = aStream.peek();
 	if(c != '<') throw std::runtime_error("as::deserialise_xml : Expected element to begin with '<'");
 	c = aStream.peek();
-	aStream >> c;
+	aStream.read(&c, 1);
 	c = aStream.peek();
 	aStream.seekg(pos);
 	if(c != '/') {
@@ -196,7 +196,7 @@ void read_body(std::istream& aStream, element& e) {
 	}else {
 		 while (c != '<') {
 			 e.body += c;
-			 aStream >> c;
+			 aStream.read(&c, 1);
 			 c = aStream.peek();
 		 }
 	}
@@ -214,20 +214,20 @@ void read_attribute(std::istream& aStream, element& e) {
 
 	// Read name
 	ignore_whitespace_x(aStream);
-	aStream >> c;
+	aStream.read(&c, 1);
 	while(c != '='){
 		name += c;
-		aStream >> c;
+		aStream.read(&c, 1);
 	}
 
 	// Read value
 	ignore_whitespace_x(aStream);
-	aStream >> c;
+	aStream.read(&c, 1);
 	if(c != '"') throw std::runtime_error("as::deserialise_xml : Expected attribute value to begin with '\"'");
-	aStream >> c;
+	aStream.read(&c, 1);
 	while(c != '"') {
 		value += c;
-		aStream >> c;
+		aStream.read(&c, 1);
 	}
 
 	// Next state
@@ -240,11 +240,11 @@ void close_opening_tag(std::istream& aStream, element& e) {
 	char c = aStream.peek();
 	if(c == '/') {
 		// End element
-		aStream >> c;
-		aStream >> c;
+		aStream.read(&c, 1);
+		aStream.read(&c, 1);
 		if(c != '>') throw std::runtime_error("as::deserialise_xml : Expected opening tag to end with '>'");
 	}else if(c == '>') {
-		aStream >> c;
+		aStream.read(&c, 1);
 		// Next state
 		read_body(aStream, e);
 	}else {
@@ -256,9 +256,9 @@ void read_opening_tag_name(std::istream& aStream, element& e) {
 	char c;
 	ignore_whitespace_x(aStream);
 	c = aStream.peek();
-	while(c != '>' && c != '/' && !std::isspace(c)) {
+	while(c != '>' && c != '/' && ! std::isspace(c)) {
 		e.name += c;
-		aStream >> c;
+		aStream.read(&c, 1);
 		c = aStream.peek();
 	}
 	// Next state
@@ -268,7 +268,7 @@ void read_opening_tag_name(std::istream& aStream, element& e) {
 void open_opening_tag(std::istream& aStream, element& e) {
 	ignore_whitespace_x(aStream);
 	char c;
-	aStream >> c;
+	aStream.read(&c, 1);
 	if(c != '<') throw std::runtime_error("as::deserialise_xml : Expected opening tag to begin with '<'");
 	// Next state
 	read_opening_tag_name(aStream, e);
