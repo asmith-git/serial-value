@@ -342,7 +342,9 @@ namespace as {
 		mArray(),
 		mObject(),
 		mType(STRING_T)
-	{}
+	{
+		//! \bug mString becomes null
+	}
 			
 	/*!
 		\brief Create a STRING_T serial_value.
@@ -359,7 +361,9 @@ namespace as {
 		mArray(),
 		mObject(),
 		mType(STRING_T)
-	{}
+	{
+		//! \bug mString becomes null
+	}
 			
 	/*!
 		\brief Drestroy the serial_value and any value it contains.
