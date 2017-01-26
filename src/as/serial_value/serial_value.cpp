@@ -834,25 +834,18 @@ namespace as {
 		switch(mType) {
 		case NULL_T:
 			return "null";
-			break;
 		case CHAR_T:
 			return string_t() + mChar;
-			break;
 		case BOOL_T:
 			return mBool ? "true" : "false";
-			break;
 		case UNSIGNED_T:
 			return std::to_string(mUnsigned);
-			break;
 		case SIGNED_T:
 			return std::to_string(mSigned);
-			break;
 		case FLOAT_T:
 			return std::to_string(mFloat);
-			break;
 		case STRING_T:
 			return *mString;
-			break;
 		}
 		throw std::runtime_error("as::serial_value::get_string : Type is not convertable to string");
 	}
@@ -866,7 +859,6 @@ namespace as {
 		switch(mType) {
 		case ARRAY_T:
 			return *mArray;
-			break;
 		}
 		throw std::runtime_error("as::serial_value::get_array : Type is not convertable to array");
 	}
@@ -880,7 +872,6 @@ namespace as {
 		switch(mType) {
 		case OBJECT_T:
 			return *mObject;
-			break;
 		}
 		throw std::runtime_error("as::serial_value::get_object : Type is not convertable to object");
 	}
