@@ -27,15 +27,6 @@ namespace as {
 		\brief Create a null serial_value.
 	*/
 	serial_value::serial_value() throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
-		mSigned(),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(NULL_T)
 	{}
 
@@ -44,15 +35,6 @@ namespace as {
 		\param aOther The value to move.
 	*/
 	serial_value::serial_value(serial_value&& aOther) throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
-		mSigned(),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(NULL_T)
 	{
 		operator=(std::move(aOther));
@@ -63,15 +45,6 @@ namespace as {
 		\param aOther The value to copy.
 	*/
 	serial_value::serial_value(const serial_value& aOther) throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
-		mSigned(),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(NULL_T)
 	{
 		operator=(aOther);
@@ -82,15 +55,6 @@ namespace as {
 		\param aType The type to create.
 	*/
 	serial_value::serial_value(const type aType) throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
-		mSigned(),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(aType)
 	{
 		switch(mType) {
@@ -112,14 +76,6 @@ namespace as {
 	*/
 	serial_value::serial_value(const char_t aValue) throw() :
 		mChar(aValue),
-		mBool(),
-		mUnsigned(),
-		mSigned(),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(CHAR_T)
 	{}
 
@@ -128,15 +84,7 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const bool_t aValue) throw() :
-		mChar(),
 		mBool(aValue),
-		mUnsigned(),
-		mSigned(),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(BOOL_T)
 	{}
 
@@ -145,15 +93,7 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const uint8_t aValue) throw() :
-		mChar(),
-		mBool(),
 		mUnsigned(aValue),
-		mSigned(),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(UNSIGNED_T)
 	{}
 
@@ -162,15 +102,7 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const uint16_t aValue) throw() :
-		mChar(),
-		mBool(),
 		mUnsigned(aValue),
-		mSigned(),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(UNSIGNED_T)
 	{}
 	
@@ -179,15 +111,7 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const uint32_t aValue) throw() :
-		mChar(),
-		mBool(),
 		mUnsigned(aValue),
-		mSigned(),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(UNSIGNED_T)
 	{}
 	
@@ -196,15 +120,7 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const uint64_t aValue) throw() :
-		mChar(),
-		mBool(),
 		mUnsigned(aValue),
-		mSigned(),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(UNSIGNED_T)
 	{}
 
@@ -213,15 +129,7 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const int8_t aValue) throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
 		mSigned(aValue),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(SIGNED_T)
 	{}
 
@@ -230,15 +138,7 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const int16_t aValue) throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
 		mSigned(aValue),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(SIGNED_T)
 	{}
 	
@@ -247,15 +147,7 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const int32_t aValue) throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
 		mSigned(aValue),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(SIGNED_T)
 	{}
 	
@@ -264,15 +156,7 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const int64_t aValue) throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
 		mSigned(aValue),
-		mFloat(),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(SIGNED_T)
 	{}
 	
@@ -281,15 +165,7 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const float aValue) throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
-		mSigned(),
 		mFloat(aValue),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(FLOAT_T)
 	{}
 		
@@ -298,15 +174,7 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const double aValue) throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
-		mSigned(),
 		mFloat(aValue),
-		mPointer(),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(FLOAT_T)
 	{}
 		
@@ -315,15 +183,7 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const pointer_t aValue) throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
-		mSigned(),
-		mFloat(),
 		mPointer(aValue),
-		mString(),
-		mArray(),
-		mObject(),
 		mType(POINTER_T)
 	{}
 			
@@ -332,38 +192,18 @@ namespace as {
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const string_t& aValue) throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
-		mSigned(),
-		mFloat(),
-		mPointer(),
 		mString(new string_t(aValue)),
-		mArray(),
-		mObject(),
 		mType(STRING_T)
-	{
-		//! \bug mString becomes null
-	}
+	{}
 			
 	/*!
 		\brief Create a STRING_T serial_value.
 		\param aValue The value to set.
 	*/
 	serial_value::serial_value(const char* aValue) throw() :
-		mChar(),
-		mBool(),
-		mUnsigned(),
-		mSigned(),
-		mFloat(),
-		mPointer(),
 		mString(new string_t(aValue)),
-		mArray(),
-		mObject(),
 		mType(STRING_T)
-	{
-		//! \bug mString becomes null
-	}
+	{}
 			
 	/*!
 		\brief Drestroy the serial_value and any value it contains.
