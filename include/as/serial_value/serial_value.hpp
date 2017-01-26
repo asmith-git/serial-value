@@ -21,45 +21,44 @@
 #include <cstdint>
 
 namespace as {
-
 	class serial_value {
 	public:
-		typedef void null_t;
-		typedef char char_t;
-		typedef bool bool_t;
-		typedef uint64_t unsigned_t;
-		typedef int64_t signed_t;
-		typedef double float_t;
-		typedef void* pointer_t;
-		typedef std::string string_t;
-		typedef std::vector<serial_value> array_t;
-		typedef std::map<string_t, serial_value> object_t;
+		typedef void null_t;								//! The type contained when the value is NULL_T.
+		typedef char char_t;								//! The type contained when the value is CHAR_T.
+		typedef bool bool_t;								//! The type contained when the value is BOOL_T.
+		typedef uint64_t unsigned_t;						//! The type contained when the value is UNSIGNED_T.
+		typedef int64_t signed_t;							//! The type contained when the value is SIGNED_T.
+		typedef double float_t;								//! The type contained when the value is FLOAT_T.
+		typedef void* pointer_t;							//! The type contained when the value is POINTER_T.
+		typedef std::string string_t;						//! The type contained when the value is STRING_T.
+		typedef std::vector<serial_value> array_t;			//! The type contained when the value is ARRAY_T.
+		typedef std::map<string_t, serial_value> object_t;	//! The type contained when the value is OBJECT_T.
 	
 		enum type : uint8_t {
-			NULL_T,
-			CHAR_T,
-			BOOL_T,
-			UNSIGNED_T,
-			SIGNED_T,
-			FLOAT_T,
-			POINTER_T,
-			STRING_T,
-			ARRAY_T,
-			OBJECT_T
-		};
+			NULL_T,					//!< The value is null.
+			CHAR_T,					//!< The value is a character.
+			BOOL_T,					//!< The value is boolean.
+			UNSIGNED_T,				//!< The value is an unsigned integer.
+			SIGNED_T,				//!< The value is a signed integer.
+			FLOAT_T,				//!< The value is a floating point number.
+			POINTER_T,				//!< The value is a pointer.
+			STRING_T,				//!< The value is a string.
+			ARRAY_T,				//!< The value is an array of values.
+			OBJECT_T				//!< The value is an asociative array of values.
+		};							//!< Describes the C++ type of the value being wrapped.
 	private:
 		union {
-			char_t mChar;
-			bool_t mBool;
-			unsigned_t mUnsigned;
-			signed_t mSigned;
-			float_t mFloat;
-			pointer_t mPointer;
-			string_t* mString;
-			array_t* mArray;
-			object_t* mObject;
+			char_t mChar;			//! The value contained when the mType is CHAR_T.
+			bool_t mBool;			//! The value contained when the mType is BOOL_T.
+			unsigned_t mUnsigned;	//! The value contained when the mType is UNSIGNED_T.
+			signed_t mSigned;		//! The value contained when the mType is SIGNED_T.
+			float_t mFloat;			//! The value contained when the mType is FLOAT_T.
+			pointer_t mPointer;		//! The value contained when the mType is POINTER_T.
+			string_t* mString;		//! The value contained when the mType is STRING_T.
+			array_t* mArray;		//! The value contained when the mType is ARRAY_T.
+			object_t* mObject;		//! The value contained when the mType is OBJECT_T.
 		};
-		type mType;
+		type mType;					//! Identifies which of the values is active.
 	public:
 		serial_value() throw();
 		serial_value(serial_value&&) throw();
