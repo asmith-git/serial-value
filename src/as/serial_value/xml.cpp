@@ -301,6 +301,7 @@ as::serial_value convert_element(const element& aElement) {
 		//! \todo Handle body
 	}
 	for(const auto& i : aElement.attributes) {
+		//! \bug String pointers in child value become null
 		object.emplace(i.first, as::serial_value(i.second));
 	}
 	for(const auto& i : aElement.elements) {
