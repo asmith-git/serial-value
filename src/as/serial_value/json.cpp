@@ -77,7 +77,7 @@ void write_value(std::ostream& aStream, const as::serial_value& aValue) {
 void ignore_whitespace(std::istream& aStream) {
 	char c = aStream.peek();
 	while(std::isspace(c)) {
-		aStream >> c;
+		aStream.read(&c, 1);
 		c = aStream.peek();
 	}
 }
@@ -128,14 +128,14 @@ as::serial_value read_string(std::istream& aStream) {
 	}
 	as::serial_value tmp;
 	as::serial_value::string_t& str = tmp.set_string();
-	aStream >> c;
+	aStream.read(&c, 1);
 	while(c != '"') {
 		if(aStream.eof()) {
 			aStream.seekg(pos);
 			throw std::runtime_error("as::deserialise_json : Expected string to end with'\"'");
 		}
 		str += c;
-		aStream >> c;
+		aStream.read(&c, 1);
 	}
 	// The string is a char
 	if(str.size() == 1) return as::serial_value(str[0]);
@@ -261,7 +261,14 @@ namespace as {
 	}
 
 	serial_value deserialise_json(std::istream& aStream) {
-		return read_unknown(aStream);
+		//! \todo Fix bug with whitespace
+		std::stringstream tmp;
+		char c;
+		while(!aStream.eof()) {
+			aStream >> c;
+			tmp << c;
+		}
+		return read_unknown(tmp);
 	}
 
 }
