@@ -297,6 +297,38 @@ namespace as {
 		return *this;
 	}
 
+	bool serial_value::operator==(const serial_value& aOther) const throw() {
+		if(mType != aOther.mType) return false; //! \todo Implement conversion comparison
+		switch(mType) {
+		case NULL_T:
+			return true;
+		case CHAR_T:
+			return mChar == aOther.mChar;
+		case BOOL_T:
+			return mBool == aOther.mBool;
+		case UNSIGNED_T:
+			return mUnsigned == aOther.mUnsigned;
+		case SIGNED_T:
+			return mSigned == aOther.mSigned;
+		case FLOAT_T:
+			return mFloat == aOther.mFloat;
+		case POINTER_T:
+			return mPointer == aOther.mPointer;
+		case STRING_T:
+			return *mString == *aOther.mString;
+		case ARRAY_T:
+			return *mArray == *aOther.mArray;
+		case OBJECT_T:
+			return *mObject == *aOther.mObject;
+		}
+		return false;
+	}
+
+	bool serial_value::operator!=(const serial_value& aOther) const throw() {
+		return ! operator==(aOther);
+	}
+
+
 	/*!
 		\brief Get the number of values contained within this value.
 		\param For any values that are not either ARRAY_T or OBJECT_T this function will return 0.

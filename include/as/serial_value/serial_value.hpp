@@ -84,6 +84,9 @@ namespace as {
 		serial_value& operator=(serial_value&&) throw();
 		serial_value& operator=(const serial_value&) throw();
 
+		bool operator==(const serial_value&) const throw();
+		bool operator!=(const serial_value&) const throw();
+
 		size_t size() const throw();
 		serial_value& operator[](const size_t);
 		const serial_value& operator[](const size_t) const;
