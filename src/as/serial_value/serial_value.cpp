@@ -297,6 +297,11 @@ namespace as {
 		return *this;
 	}
 
+	/*!
+		\brief Check if two values are equal.
+		\param aOther The value to compare.
+		\return True if the two values are equal.
+	*/
 	bool serial_value::operator==(const serial_value& aOther) const throw() {
 		if(mType != aOther.mType) return false; //! \todo Implement conversion comparison
 		switch(mType) {
@@ -324,6 +329,12 @@ namespace as {
 		return false;
 	}
 
+
+	/*!
+		\brief Check if two values are not equal.
+		\param aOther The value to compare.
+		\return True if the two values are not equal.
+	*/
 	bool serial_value::operator!=(const serial_value& aOther) const throw() {
 		return ! operator==(aOther);
 	}
