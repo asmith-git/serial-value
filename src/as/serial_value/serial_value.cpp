@@ -339,6 +339,51 @@ namespace as {
 		return ! operator==(aOther);
 	}
 
+	/*!
+		\brief Check if a value is less than this value.
+		\detail Will throw exception if either value is not convertable to FLOAT_T
+		\param aOther The value to compare.
+		\return True if aOther is less than this value.
+		\see get_float
+	*/
+	bool serial_value:: operator<(const serial_value& aOther) const {
+		return get_float() < aOther.get_float();
+	}
+
+	/*!
+		\brief Check if a value is less than or equal to this value.
+		\detail Will throw exception if either value is not convertable to FLOAT_T
+		\param aOther The value to compare.
+		\return True if aOther is less than or equal to this value.
+		\see get_float
+	*/
+	bool serial_value::operator<=(const serial_value& aOther) const {
+		return get_float() <= aOther.get_float();
+	}
+
+	/*!
+		\brief Check if a value is greater than this value.
+		\detail Will throw exception if either value is not convertable to FLOAT_T
+		\param aOther The value to compare.
+		\return True if aOther is greater than this value.
+		\see get_float
+	*/
+	bool serial_value::operator>(const serial_value& aOther) const {
+		return get_float() > aOther.get_float();
+	}
+
+	/*!
+		\brief Check if a value is greater than or equal to this value.
+		\detail Will throw exception if either value is not convertable to FLOAT_T
+		\param aOther The value to compare.
+		\return True if aOther is greater than or equal to this value.
+		\see get_float
+	*/
+	bool serial_value::operator>=(const serial_value& aOther) const {
+		return get_float() >= aOther.get_float();
+	}
+
+
 
 	/*!
 		\brief Get the number of values contained within this value.
