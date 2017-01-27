@@ -92,6 +92,16 @@ namespace as {
 		bool operator>(const serial_value&) const;
 		bool operator>=(const serial_value&) const;
 
+		serial_value operator+(const serial_value&) const;
+		serial_value operator-(const serial_value&) const;
+		serial_value operator*(const serial_value&) const;
+		serial_value operator/(const serial_value&) const;
+
+		serial_value& operator+=(const serial_value&);
+		serial_value& operator-=(const serial_value&);
+		serial_value& operator*=(const serial_value&);
+		serial_value& operator/=(const serial_value&);
+
 		size_t size() const throw();
 		serial_value& operator[](const size_t);
 		const serial_value& operator[](const size_t) const;

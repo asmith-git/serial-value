@@ -383,6 +383,101 @@ namespace as {
 		return get_float() >= aOther.get_float();
 	}
 
+	/*!
+		\brief Add two values.
+		\detail Will throw exception if either value is not convertable to FLOAT_T.
+		\param aOther The second value.
+		\return The resulting value.
+		\see get_float
+	*/
+	serial_value serial_value::operator+(const serial_value& aOther) const {
+		return serial_value(get_float() + aOther.get_float());
+	}
+
+	/*!
+		\brief Subtract two values.
+		\detail Will throw exception if either value is not convertable to FLOAT_T.
+		\param aOther The second value.
+		\return The resulting value.
+		\see get_float
+	*/
+	serial_value serial_value::operator-(const serial_value& aOther) const {
+		return serial_value(get_float() - aOther.get_float());
+	}
+
+	/*!
+		\brief Multiply two values.
+		\detail Will throw exception if either value is not convertable to FLOAT_T.
+		\param aOther The second value.
+		\return The resulting value.
+		\see get_float
+	*/
+	serial_value serial_value::operator*(const serial_value& aOther) const {
+		return serial_value(get_float() * aOther.get_float());
+	}
+
+	/*!
+		\brief Divide two values.
+		\detail Will throw exception if either value is not convertable to FLOAT_T.
+		\param aOther The second value.
+		\return The resulting value.
+		\see get_float
+	*/
+	serial_value serial_value::operator/(const serial_value& aOther) const {
+		return serial_value(get_float() / aOther.get_float());
+	}
+
+	/*!
+		\brief Add two values.
+		\detail Will throw exception if either value is not convertable to FLOAT_T.
+		\param aOther The value to compare.
+		\return A reference to this value.
+		\see get_float
+	*/
+	serial_value& serial_value::operator+=(const serial_value& aOther) {
+		get_float();
+		mFloat += aOther.get_float();
+		return *this;
+	}
+
+	/*!
+		\brief Subtract two values.
+		\detail Will throw exception if either value is not convertable to FLOAT_T.
+		\param aOther The value to compare.
+		\return A reference to this value.
+		\see get_float
+	*/
+	serial_value& serial_value::operator-=(const serial_value& aOther) {
+		get_float();
+		mFloat -= aOther.get_float();
+		return *this;
+	}
+
+	/*!
+		\brief Multiply two values.
+		\detail Will throw exception if either value is not convertable to FLOAT_T.
+		\param aOther The value to compare.
+		\return A reference to this value.
+		\see get_float
+	*/
+	serial_value& serial_value::operator*=(const serial_value& aOther) {
+		get_float();
+		mFloat *= aOther.get_float();
+		return *this;
+	}
+
+	/*!
+		\brief Divide two values.
+		\detail Will throw exception if either value is not convertable to FLOAT_T.
+		\param aOther The value to compare.
+		\return A reference to this value.
+		\see get_float
+	*/
+	serial_value& serial_value::operator/=(const serial_value& aOther) {
+		get_float();
+		mFloat /= aOther.get_float();
+		return *this;
+	}
 
 
 	/*!
