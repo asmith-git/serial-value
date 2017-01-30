@@ -74,29 +74,22 @@ void write_value(std::ostream& aStream, const as::serial_value& aValue) {
 	}
 }
 
-void ignore_whitespace(std::istream& aStream) {
-	char c = aStream.peek();
-	while(std::isspace(c)) {
-		aStream.read(&c, 1);
-		c = aStream.peek();
-	}
-}
+#define ignore_whitespace(aStream) while(std::isspace(aStream.peek())) aStream.get();
 
 as::serial_value read_unknown(std::istream&);
 
 as::serial_value read_null(std::istream& aStream) {
-	const auto pos = aStream.tellg();
+	ignore_whitespace(aStream);
 	char tmp[4];
 	aStream.read(tmp, 4);
 	if(memcmp(tmp, "null", 4) != 0) {
-		aStream.seekg(pos);
 		throw std::runtime_error("as::deserialise_json : Expected 'null'");
 	}
 	return as::serial_value();
 }
 
 as::serial_value read_bool(std::istream& aStream) {
-	const auto pos = aStream.tellg();
+	ignore_whitespace(aStream);
 	char tmp[4];
 	aStream.read(tmp, 4);
 	const bool t = memcmp(tmp, "true", 4) == 0;
@@ -104,10 +97,9 @@ as::serial_value read_bool(std::istream& aStream) {
 	if(t) {
 		return as::serial_value(true);
 	}else if(f) {
-		aStream >> tmp[0];
+		aStream.read(tmp, 1);
 		if(tmp[0] == 'e') return as::serial_value(false);
 	}
-	aStream.seekg(pos);
 	throw std::runtime_error("as::deserialise_json : Expected 'true' or 'false'");
 }
 
@@ -119,24 +111,21 @@ as::serial_value read_number(std::istream& aStream) {
 
 as::serial_value read_string(std::istream& aStream) {
 	//! \todo Handle control character '\'
-	auto pos = aStream.tellg();
+	ignore_whitespace(aStream);
+
 	char c;
-	aStream >> c;
-	if(c != '"') {
-		aStream.seekg(pos);
-		throw std::runtime_error("as::deserialise_json : Expected string to begin with '\"'");
-	}
+	aStream.read(&c, 1); 
+	if(c != '"') throw std::runtime_error(std::string("as::deserialise_json : Expected string to begin with '\"' got '") + c + "'");
+
 	as::serial_value tmp;
 	as::serial_value::string_t& str = tmp.set_string();
-	aStream.read(&c, 1);
+	aStream.read(&c, 1); 
 	while(c != '"') {
-		if(aStream.eof()) {
-			aStream.seekg(pos);
-			throw std::runtime_error("as::deserialise_json : Expected string to end with'\"'");
-		}
+		if(aStream.eof()) throw std::runtime_error(std::string("as::deserialise_json : Expected string to end with'\"' got") + c + "'");
 		str += c;
-		aStream.read(&c, 1);
+		aStream.read(&c, 1); 
 	}
+	
 	// The string is a char
 	if(str.size() == 1) return as::serial_value(str[0]);
 
@@ -148,83 +137,90 @@ as::serial_value read_string(std::istream& aStream) {
 		ss >> ptr;
 		return as::serial_value(ptr);
 	}
+
 	return tmp;
 }
 
 as::serial_value read_array(std::istream& aStream) {
-	auto pos = aStream.tellg();
+	ignore_whitespace(aStream);
+
 	char c;
-	aStream >> c;
-	if (c != '[') {
-		aStream.seekg(pos);
-		throw std::runtime_error("as::deserialise_json : Expected array to begin with '['");
-	}
+	aStream.read(&c, 1); 
+	if (c != '[') throw std::runtime_error("as::deserialise_json : Expected array to begin with '['");
+
 	as::serial_value tmp;
 	as::serial_value::array_t& values = tmp.set_array();
+
+	ignore_whitespace(aStream);
 	c = aStream.peek();
 	while(c != ']') {
+
+		// Handle value seperators
+		if(c == ',') {
+			aStream.read(&c, 1);
+			ignore_whitespace(aStream);
+			c = aStream.peek();
+			continue;
+		}
+
+		// Read the child value
+		values.push_back(read_unknown(aStream));
+
 		ignore_whitespace(aStream);
-		c = aStream.peek();
-		if(c == ',') aStream >> c;
-
-		try {
-			values.push_back(read_unknown(aStream));
-		}catch (std::exception& e) {
-			aStream.seekg(pos);
-			throw e;
-		}
-
-		if(aStream.eof()) {
-			aStream.seekg(pos);
-			throw std::runtime_error("as::deserialise_json : Expected array to end with ']'");
-		}
+		if(aStream.eof()) throw std::runtime_error("as::deserialise_json : Expected array to end with ']'");
 		c = aStream.peek();
 	}
-	aStream >> c;
+	aStream.read(&c, 1); 
+
 	return tmp;
 }
 
 as::serial_value read_object(std::istream& aStream) {
-	auto pos = aStream.tellg();
+	ignore_whitespace(aStream);
+
 	char c;
-	aStream >> c;
-	if (c != '{') {
-		aStream.seekg(pos);
-		throw std::runtime_error("as::deserialise_json : Expected object to begin with '{'");
-	}
+	aStream.read(&c, 1); 
+	if(c != '{') throw std::runtime_error("as::deserialise_json : Expected object to begin with '{'");
+
 	as::serial_value tmp;
 	as::serial_value::object_t& values = tmp.set_object();
+
+	ignore_whitespace(aStream);
 	c = aStream.peek();
 	while(c != '}') {
-		ignore_whitespace(aStream);
-		c = aStream.peek();
-		if(c == ',') aStream >> c;
 
-		try {
-			as::serial_value::string_t name = read_string(aStream).get_string();
+		// Handle value seperators
+		if(c == ',') {
+			aStream.read(&c, 1); 
 			ignore_whitespace(aStream);
-			aStream >> c;
-			if(c != ':') throw std::runtime_error("as::deserialise_json : Expected object members to be seperated with ':'");
-			values.emplace(name, read_unknown(aStream));
-		}catch (std::exception& e) {
-			aStream.seekg(pos);
-			throw e;
+			c = aStream.peek();
+			continue;
 		}
 
-		if(aStream.eof()) {
-			aStream.seekg(pos);
-			throw std::runtime_error("as::deserialise_json : Expected object to end with '}'");
-		}
+		// Read the child name
+		as::serial_value::string_t name = read_string(aStream).get_string();
+		ignore_whitespace(aStream);
+
+		// Handle name name seperator
+		aStream.read(&c, 1); 
+		if(c != ':') throw std::runtime_error("as::deserialise_json : Expected object members to be seperated with ':'");
+
+		// Read the child value
+		values.emplace(name, read_unknown(aStream));
+
+		ignore_whitespace(aStream);
+		if(aStream.eof()) throw std::runtime_error("as::deserialise_json : Expected object to end with '}'");
 		c = aStream.peek();
 	}
-	aStream >> c;
+	aStream.read(&c, 1); 
 	return tmp;
 }
 
 as::serial_value read_unknown(std::istream& aStream) {
 	ignore_whitespace(aStream);
 
-	switch(aStream.peek())
+	const char c = aStream.peek();
+	switch(c)
 	{
 	case 'n':
 		return read_null(aStream);
@@ -250,7 +246,7 @@ as::serial_value read_unknown(std::istream& aStream) {
 	case '{':
 		return read_object(aStream);
 	default:
-		throw std::runtime_error("as::deserialise_json : Could not determine type of JSON value");
+		throw std::runtime_error(std::string("as::deserialise_json : Could not determine type of JSON value starting with '") + c + "'");
 		break;
 	}
 }
@@ -261,14 +257,9 @@ namespace as {
 	}
 
 	serial_value deserialise_json(std::istream& aStream) {
-		//! \todo Fix bug with whitespace
-		std::stringstream tmp;
-		char c;
-		while(!aStream.eof()) {
-			aStream >> c;
-			tmp << c;
-		}
-		return read_unknown(tmp);
+		return read_unknown(aStream);
 	}
 
 }
+
+#undef ignore_whitespace
