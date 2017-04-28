@@ -101,16 +101,16 @@ namespace asmith { namespace serial {
 		json_skip_whitespace(aStream);
 
 		char c = aStream.peek();
-		if(c != '"') throw std::runtime_error("asmith::json_format::read_serial : Expected string to begin with \"");
+		if(c != '"') throw std::runtime_error("asmith::json_format::read_serial : Expected string to begin with '\"'");
 
 		value tmp;
 		value::string_t& str = tmp.set_string();
 
 		aStream.read(&c, 1);
-		while (c != '"') {
+		while(c != '"') {
 			str += c;
 			aStream.read(&c, 1);
-			if(aStream.eof()) throw std::runtime_error("asmith::json_format::read_serial : Expected string to end with \"");
+			if(aStream.eof()) throw std::runtime_error("asmith::json_format::read_serial : Expected string to end with '\"'");
 		}
 
 		return tmp;
@@ -119,8 +119,28 @@ namespace asmith { namespace serial {
 	value json_read_array(std::istream& aStream) {
 		json_skip_whitespace(aStream);
 
-		//! \todo Implement
-		return value();
+		char c = aStream.peek();
+		if(c != '[') throw std::runtime_error("asmith::json_format::read_serial : Expected array to begin with '['");
+		json_skip_whitespace(aStream);
+
+		value tmp;
+		value::array_t& array_ = tmp.set_array();
+
+		c = aStream.peek();
+		while(c != ']') {
+			if(aStream.eof()) throw std::runtime_error("asmith::json_format::read_serial : Expected array to end with ']'");
+			array_.push_back(json_read_value(aStream));
+			json_skip_whitespace(aStream);
+			c = aStream.peek();
+			if(c == ']') break;
+			else if(c != ',') throw std::runtime_error("asmith::json_format::read_serial : Expected array elements to be seperated with ','");
+			aStream.read(&c, 1);
+			json_skip_whitespace(aStream);
+		}
+		aStream.read(&c, 1);
+
+		return tmp;
+
 	}
 
 	value json_read_object(std::istream& aStream) {
