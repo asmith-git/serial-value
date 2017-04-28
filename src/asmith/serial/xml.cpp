@@ -76,7 +76,11 @@ namespace asmith { namespace serial {
 			aStream << aType.get_number();
 			break;
 		case value::STRING_T:
-			aStream << aType.get_string();
+			{
+				std::string str = aType.get_string();
+				xml_encode_string(str);
+				aStream << str;
+			}
 			break;
 		case value::ARRAY_T:
 			throw std::runtime_error("xml_format : Cannot write array as internal value");
@@ -113,8 +117,12 @@ namespace asmith { namespace serial {
 			aStream << aType.get_number();
 			break;
 		case value::STRING_T:
-			aStream << ">";
-			aStream << aType.get_string();
+			aStream << ">";			
+			{
+				std::string str = aType.get_string();
+				xml_encode_string(str);
+				aStream << str;
+			}
 			break;
 		case value::ARRAY_T:
 			aStream << ">";
