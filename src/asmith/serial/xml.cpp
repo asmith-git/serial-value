@@ -85,7 +85,6 @@ namespace asmith { namespace serial {
 			}
 			break;
 		case value::OBJECT_T:
-			aStream << ">";
 			{
 				const value::object_t tmp = aType.get_object();
 				const size_t s = tmp.size();
