@@ -15,7 +15,8 @@
 	
 namespace asmith { namespace serial {
 	void json_format::write_serial(const value& aType, std::ostream& aStream) {
-				const value::type tBuf = aType.get_type();
+		const value::type tBuf = aType.get_type();
+
 		switch(tBuf) {
 		case value::NULL_T:
 			aStream << "null";
