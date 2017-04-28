@@ -13,6 +13,7 @@
 
 #include "asmith/serial/value.hpp"
 	
+namespace asmith { namespace serial {
 
 	bool sv_strcmp(const char* aFirst, const char* aSecond) {
 		char a = *aFirst;
