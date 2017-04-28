@@ -18,6 +18,16 @@
 	
 namespace asmith { namespace serial {
 	class json_format : public format {
+	private:
+		bool mFancy;
+
+		void write_serial_internal(size_t, const value&, std::ostream&);
+	public:
+		json_format();
+		json_format& set_fancy_writing(const bool);
+
+		// Inherited from format
+
 		void write_serial(const value&, std::ostream&) override;
 		value read_serial(std::istream&) override;
 	};

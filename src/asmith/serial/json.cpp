@@ -200,7 +200,22 @@ namespace asmith { namespace serial {
 		}
 	}
 
-	void json_format::write_serial(const value& aType, std::ostream& aStream) {
+	// json_format
+
+
+	json_format::json_format() :
+		mFancy(false)
+	{}
+
+	json_format& json_format::set_fancy_writing(const bool aOption) {
+		mFancy = aOption;
+		return *this;
+	}
+
+	void json_format::write_serial_internal(size_t aDepth, const value& aType, std::ostream& aStream) {
+		const auto indent = [&]()->void {
+			for(size_t i = 0; i < aDepth; ++i) aStream << '\t';
+		};
 		const value::type tBuf = aType.get_type();
 
 		switch(tBuf) {
@@ -222,27 +237,39 @@ namespace asmith { namespace serial {
 		case value::ARRAY_T:
 			{
 				aStream << '[';
+				if(mFancy) aStream << '\n';
+				++aDepth;
 				const value::array_t tmp = aType.get_array();
 				const size_t s = tmp.size();
 				for(size_t i = 0; i < s; ++i) {
-					write_serial(tmp[i], aStream);
+					if(mFancy) indent();
+					write_serial_internal(aDepth, tmp[i], aStream);
 					if(i + 1 < s) aStream << ',';
+					if(mFancy) aStream << '\n';
 				}
+				--aDepth;
+				if(mFancy) indent();
 				aStream << ']';
 			}
 			break;
 		case value::OBJECT_T:
 		{
 			aStream << '{';
+			if(mFancy) aStream << '\n';
+			++aDepth;
 			const value::object_t tmp = aType.get_object();
 			const size_t s = tmp.size();
 			size_t i = 0;
 			for(const auto& v : tmp) {
+				if(mFancy) indent();
 				aStream << '"' << v.first<< '"' << ':';
-				write_serial(v.second, aStream);
+				write_serial_internal(aDepth, v.second, aStream);
 				if(i + 1 < s) aStream << ',';
+				if(mFancy) aStream << '\n';
 				++i;
 			}
+			--aDepth;
+			if(mFancy) indent();
 			aStream << '}';
 		}
 		break;
@@ -250,6 +277,10 @@ namespace asmith { namespace serial {
 			throw std::runtime_error("json_format : Invalid serial type");
 			break;
 		}
+	}
+
+	void json_format::write_serial(const value& aType, std::ostream& aStream) {
+		write_serial_internal(0, aType, aStream);
 	}
 
 	value json_format::read_serial(std::istream& aStream) {
