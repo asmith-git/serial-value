@@ -140,14 +140,37 @@ namespace asmith { namespace serial {
 		aStream.read(&c, 1);
 
 		return tmp;
-
 	}
 
 	value json_read_object(std::istream& aStream) {
 		json_skip_whitespace(aStream);
 
-		//! \todo Implement
-		return value();
+		char c = aStream.peek();
+		if(c != '{') throw std::runtime_error("asmith::json_format::read_serial : Expected object to begin with '{'");
+		json_skip_whitespace(aStream);
+
+		value tmp;
+		value::object_t& object = tmp.set_object();
+
+		c = aStream.peek();
+		while(c != '}') {
+			if(aStream.eof()) throw std::runtime_error("asmith::json_format::read_serial : Expected object to end with '}'");
+			const value::string_t name = json_read_string(aStream).get_string();
+			json_skip_whitespace(aStream);
+			aStream.read(&c, 1);
+			if(c != ':') throw std::runtime_error("asmith::json_format::read_serial : Expected object name to be end with ':'");
+			json_skip_whitespace(aStream);
+			object.emplace(name, json_read_value(aStream));
+			json_skip_whitespace(aStream);
+			c = aStream.peek();
+			if(c == '}') break;
+			else if(c != ',') throw std::runtime_error("asmith::json_format::read_serial : Expected object elements to be seperated with ','");
+			aStream.read(&c, 1);
+			json_skip_whitespace(aStream);
+		}
+		aStream.read(&c, 1);
+
+		return tmp;
 	}
 
 	value json_read_value(std::istream& aStream) {
