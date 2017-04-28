@@ -42,6 +42,8 @@ namespace asmith { namespace serial {
 		case '7':
 		case '8':
 		case '9':
+		case '-':
+		case '+':
 			return value::NUMBER_T;
 		case '"':
 			return value::STRING_T;
@@ -92,6 +94,7 @@ namespace asmith { namespace serial {
 		while(is_number(c)) {
 			buf[s++] = c;
 			aStream.read(&c, 1);
+			c = aStream.peek();
 		}
 		buf[s] = '\0';
 		return value(atof(buf));
@@ -102,16 +105,19 @@ namespace asmith { namespace serial {
 
 		char c = aStream.peek();
 		if(c != '"') throw std::runtime_error("asmith::json_format::read_serial : Expected string to begin with '\"'");
+		aStream.read(&c, 1);
 
 		value tmp;
 		value::string_t& str = tmp.set_string();
 
-		aStream.read(&c, 1);
+		c = aStream.peek();
 		while(c != '"') {
 			str += c;
 			aStream.read(&c, 1);
 			if(aStream.eof()) throw std::runtime_error("asmith::json_format::read_serial : Expected string to end with '\"'");
+			c = aStream.peek();
 		}
+		aStream.read(&c, 1);
 
 		return tmp;
 	}
@@ -121,6 +127,7 @@ namespace asmith { namespace serial {
 
 		char c = aStream.peek();
 		if(c != '[') throw std::runtime_error("asmith::json_format::read_serial : Expected array to begin with '['");
+		aStream.read(&c, 1);
 		json_skip_whitespace(aStream);
 
 		value tmp;
@@ -147,6 +154,7 @@ namespace asmith { namespace serial {
 
 		char c = aStream.peek();
 		if(c != '{') throw std::runtime_error("asmith::json_format::read_serial : Expected object to begin with '{'");
+		aStream.read(&c, 1);
 		json_skip_whitespace(aStream);
 
 		value tmp;
