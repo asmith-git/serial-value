@@ -14,7 +14,7 @@
 #include "serialiser.hpp"
 
 #ifndef ASMITH_SERIAL_FORMAT_HPP
-#define ASMITH_SERIAL_FORMAT_HP
+#define ASMITH_SERIAL_FORMAT_HPP
 	
 namespace asmith { namespace serial {
 	class format {
