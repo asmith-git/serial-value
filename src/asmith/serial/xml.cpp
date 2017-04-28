@@ -14,8 +14,119 @@
 #include "asmith/serial/xml.hpp"
 	
 namespace asmith { namespace serial {
+
+	//! \todo Remove illegal characters in xml
+
+	static void xml_write_internal(const value& aType, std::ostream& aStream) {
+		const value::type tBuf = aType.get_type();
+
+		switch(tBuf) {
+		case value::NULL_T:
+			aStream << "null";
+			break;
+		case value::BOOl_T:
+			aStream << (aType.get_bool() ? "true" : "false");
+			break;
+		case value::CHAR_T:
+			aStream << aType.get_char() ;
+			break;
+		case value::NUMBER_T:
+			aStream << aType.get_number();
+			break;
+		case value::STRING_T:
+			aStream << aType.get_string();
+			break;
+		case value::ARRAY_T:
+			throw std::runtime_error("xml_format : Cannot write array as internal value");
+			break;
+		case value::OBJECT_T:
+			throw std::runtime_error("xml_format : Cannot write object as internal value");
+			break;
+		default:
+			throw std::runtime_error("xml_format : Invalid serial type");
+			break;
+		}
+	}
+
+	static void xml_write_element(const char* const aName, const value& aType, std::ostream& aStream) {
+		bool closeTag = true;
+		aStream << "<" << aName;
+		const value::type tBuf = aType.get_type();
+
+		switch(tBuf) {
+		case value::NULL_T:
+			aStream << "/>";
+			closeTag = false;
+			break;
+		case value::BOOl_T:
+			aStream << ">";
+			aStream << (aType.get_bool() ? "true" : "false");
+			break;
+		case value::CHAR_T:
+			aStream << ">";
+			aStream << aType.get_char();
+			break;
+		case value::NUMBER_T:
+			aStream << ">";
+			aStream << aType.get_number();
+			break;
+		case value::STRING_T:
+			aStream << ">";
+			aStream << aType.get_string();
+			break;
+		case value::ARRAY_T:
+			aStream << ">";
+			{
+				const value::array_t tmp = aType.get_array();
+				const size_t s = tmp.size();
+				for(size_t i = 0; i < s; ++i) {
+					xml_write_element(std::to_string(i).c_str(), tmp[i], aStream);
+				}
+			}
+			break;
+		case value::OBJECT_T:
+			aStream << ">";
+			{
+				const value::object_t tmp = aType.get_object();
+				const size_t s = tmp.size();
+
+				// Determine which values should be written as attributes and elements
+				typedef std::pair<const std::string, value> value_t;
+				std::vector<const value_t*> attributeValues;
+				std::vector<const value_t*> elementValues;
+
+				for(const auto& v : tmp) {
+					const value::type t = v.second.get_type();
+					if(t == value::ARRAY_T || t == value::OBJECT_T) {
+						elementValues.push_back(&v);
+					}else {
+						attributeValues.push_back(&v);
+					}
+				}
+
+				// Write the values
+				for(const value_t* i : attributeValues) {
+					aStream << ' ' << i->first << '=' << '"';
+					xml_write_internal(i->second, aStream);
+					aStream << '"';
+				}
+
+				aStream << ">";
+
+				for(const value_t* i : elementValues) {
+					xml_write_element(i->first.c_str(), i->second, aStream);
+				}
+			}
+			break;
+		default:
+			throw std::runtime_error("xml_format : Invalid serial type");
+			break;
+		}
+		if(closeTag) aStream << "</" << aName << ">";
+	}
+
 	void xml_format::write_serial(const value& aType, std::ostream& aStream) {
-		//! \todo Implement
+		xml_write_element("xml", aType, aStream);
 	}
 
 	value xml_format::read_serial(std::istream& aStream) {
