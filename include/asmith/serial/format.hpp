@@ -17,8 +17,10 @@
 #define ASMITH_SERIAL_FORMAT_HP
 	
 namespace asmith { namespace serial {
+	class format {
 	public:
-	
+		virtual ~format() {}
+
 		virtual void write_serial(const value&, std::ostream&) = 0;
 		virtual value read_serial(std::istream&) = 0;
 	
