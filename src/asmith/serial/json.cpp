@@ -15,7 +15,54 @@
 	
 namespace asmith { namespace serial {
 	void json_format::write_serial(const value& aType, std::ostream& aStream) {
-		//! \todo Implement
+				const value::type tBuf = aType.get_type();
+		switch(tBuf) {
+		case value::NULL_T:
+			aStream << "null";
+			break;
+		case value::BOOl_T:
+			aStream << (aType.get_bool() ? "true" : "false");
+			break;
+		case value::CHAR_T:
+			aStream << '"' << aType.get_char() << '"';
+			break;
+		case value::NUMBER_T:
+			aStream << aType.get_number();
+			break;
+		case value::STRING_T:
+			aStream << '"' << aType.get_string() << '"';
+			break;
+		case value::ARRAY_T:
+			{
+				aStream << '[';
+				const value::array_t tmp = aType.get_array();
+				const size_t s = tmp.size();
+				for(size_t i = 0; i < s; ++i) {
+					write_serial(tmp[i], aStream);
+					if(i + 1 < s) aStream << ',';
+				}
+				aStream << ']';
+			}
+			break;
+		case value::OBJECT_T:
+		{
+			aStream << '{';
+			const value::object_t tmp = aType.get_object();
+			const size_t s = tmp.size();
+			size_t i = 0;
+			for(const auto& v : tmp) {
+				aStream << '"' << v.first<< '"' << ':';
+				write_serial(v.second, aStream);
+				if(i + 1 < s) aStream << ',';
+				++i;
+			}
+			aStream << '}';
+		}
+		break;
+		default:
+			throw std::runtime_error("json_format : Invalid serial type");
+			break;
+		}
 	}
 
 	value json_format::read_serial(std::istream& aStream) {
