@@ -20,6 +20,7 @@ namespace asmith { namespace serial {
 		char c = aStream.peek();
 		while(std::isspace(c)) {
 			aStream.read(&c, 1);
+			c = aStream.peek();
 		}
 	}
 
