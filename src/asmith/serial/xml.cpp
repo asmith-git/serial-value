@@ -28,6 +28,34 @@ namespace asmith { namespace serial {
 		virtual void add_attribute(const char*, const char*) = 0;
 		virtual void add_body(const char*) = 0;
 	};
+	
+	static const std::string XML_ILLEGAL[5][2] = {
+		{"&",   "&amp;"},
+		{"<",   "&lt;"},
+		{">",   "&gt;"},
+		{"\"",  "&quot;"},
+		{"'",   "&apos;"}
+	};
+
+	static void xml_string_replace(std::string& aStr, const std::string& aTarget, const std::string& aReplacement) {
+	    size_t i = aStr.find(aTarget);
+	    while(i != std::string::npos) {
+		aStr.replace(i, aTarget.size(), aReplacement);
+		i = aStr.find(aTarget, i+aReplacement.size());
+	    }
+	}
+
+	static void xml_encode_string(std::string& aStr) {
+	    for(const std::string i[2] : XML_ILLEGAL) {
+		xml_string_replace(aStr, i[0], i[1]);
+	    }
+	}
+
+	static void xml_decode_string(std::string& aStr) {
+	    for(const std::string i[2] : XML_ILLEGAL) {
+		xml_string_replace(aStr, i[1], i[0]);
+	    }
+	}
 
 	//! \todo Remove illegal characters in xml
 
