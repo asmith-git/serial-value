@@ -90,31 +90,22 @@ namespace asmith { namespace serial {
 				const value::object_t tmp = aType.get_object();
 				const size_t s = tmp.size();
 
-				// Determine which values should be written as attributes and elements
-				typedef std::pair<const std::string, value> value_t;
-				std::vector<const value_t*> attributeValues;
-				std::vector<const value_t*> elementValues;
-
 				for(const auto& v : tmp) {
 					const value::type t = v.second.get_type();
-					if(t == value::ARRAY_T || t == value::OBJECT_T) {
-						elementValues.push_back(&v);
-					}else {
-						attributeValues.push_back(&v);
+					if(t != value::ARRAY_T && t != value::OBJECT_T) {
+						aStream << ' ' << v.first << '=' << '"';
+						xml_write_internal(v.second, aStream);
+						aStream << '"';
 					}
-				}
-
-				// Write the values
-				for(const value_t* i : attributeValues) {
-					aStream << ' ' << i->first << '=' << '"';
-					xml_write_internal(i->second, aStream);
-					aStream << '"';
 				}
 
 				aStream << ">";
 
-				for(const value_t* i : elementValues) {
-					xml_write_element(i->first.c_str(), i->second, aStream);
+				for (const auto& v : tmp) {
+					const value::type t = v.second.get_type();
+					if(t == value::ARRAY_T || t == value::OBJECT_T) {
+						xml_write_element(v.first.c_str(), v.second, aStream);
+					}
 				}
 			}
 			break;
