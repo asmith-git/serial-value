@@ -172,7 +172,7 @@ namespace asmith { namespace serial {
 
 		static output_t deserialise(const value& aValue) {
 			output_t tmp;
-			const value::array_t& val = tmp.get_array();
+			const value::array_t& val = aValue.get_array();
 			for(const value& i : val) {
 				tmp.push_back(serial::deserialise<T>(i));
 			}
@@ -196,7 +196,7 @@ namespace asmith { namespace serial {
 
 		static output_t deserialise(const value& aValue) {
 			output_t tmp;
-			const value::array_t& val = tmp.get_array();
+			const value::array_t& val = aValue.get_array();
 			for(const value& i : val) {
 				tmp.push_back(serial::deserialise<T>(i));
 			}
@@ -220,7 +220,7 @@ namespace asmith { namespace serial {
 
 		static output_t deserialise(const value& aValue) {
 			output_t tmp;
-			const value::array_t& val = tmp.get_array();
+			const value::array_t& val = aValue.get_array();
 			for(const value& i : val) {
 				tmp.push_back(serial::deserialise<V>(i));
 			}
@@ -244,7 +244,7 @@ namespace asmith { namespace serial {
 
 		static output_t deserialise(const value& aValue) {
 			output_t tmp;
-			const value::array_t& val = tmp.get_array();
+			const value::array_t& val = aValue.get_array();
 			for(size_t i = 0; i < S; ++i) {
 				tmp[i] = serial::deserialise<T>(val[i]);
 			}
@@ -267,7 +267,7 @@ namespace asmith { namespace serial {
 
 		static output_t deserialise(const value& aValue) {
 			output_t tmp;
-			const value::object_t& val = tmp.get_object();
+			const value::object_t& val = aValue.get_object();
 			tmp.first = serial::deserialise<A>(val.find("first")->second);
 			tmp.second = serial::deserialise<B>(val.find("second")->second);
 			return tmp;
