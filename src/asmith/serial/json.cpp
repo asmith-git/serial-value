@@ -12,8 +12,93 @@
 //	limitations under the License.
 
 #include "asmith/serial/json.hpp"
+#include <cctype>
 	
 namespace asmith { namespace serial {
+
+	void json_skip_whitespace(std::istream& aStream) {
+		char c = aStream.peek();
+		while(std::isspace(c)) {
+			aStream.read(&c, 1);
+		}
+	}
+
+	value::type json_determine_type(std::istream& aStream) {
+		json_skip_whitespace(aStream);
+		char c = aStream.peek();
+		switch(c) {
+		case 'n':
+			return value::NULL_T;
+		case 't':
+		case 'f':
+			return value::BOOl_T;
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			return value::NUMBER_T;
+		case '"':
+			return value::STRING_T;
+		case '[':
+			return value::ARRAY_T;
+		case '{':
+			return value::OBJECT_T;
+		default:
+			throw std::runtime_error("asmith::json_format::read_serial : Could not determin JSON type");
+		}
+	}
+
+	value json_read_value(std::istream&);
+
+	value json_read_null(std::istream& aStream) {
+
+	}
+
+	value json_read_bool(std::istream& aStream) {
+
+	}
+
+	value json_read_number(std::istream& aStream) {
+
+	}
+
+	value json_read_string(std::istream& aStream) {
+
+	}
+
+	value json_read_array(std::istream& aStream) {
+
+	}
+
+	value json_read_object(std::istream& aStream) {
+
+	}
+
+	value json_read_value(std::istream& aStream) {
+		switch(json_determine_type(aStream)) {
+		case value::NULL_T:
+			return json_read_null(aStream);
+		case value::BOOl_T:
+			return json_read_bool(aStream);
+		case value::NUMBER_T:
+			return json_read_number(aStream);
+		case value::STRING_T:
+			return json_read_string(aStream);
+		case value::ARRAY_T:
+			return json_read_array(aStream);
+		case value::OBJECT_T:
+			return json_read_object(aStream);
+		default:
+			throw std::runtime_error("asmith::json_format::read_serial : Could not determin JSON type");
+		}
+	}
+
 	void json_format::write_serial(const value& aType, std::ostream& aStream) {
 		const value::type tBuf = aType.get_type();
 
