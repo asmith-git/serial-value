@@ -245,6 +245,6 @@ namespace asmith { namespace serial {
 	}
 
 	value json_format::read_serial(std::istream& aStream) {
-		return json_read_object(aStream);
+		return json_read_value(aStream);
 	}
 }}
