@@ -14,6 +14,20 @@
 #include "asmith/serial/xml.hpp"
 	
 namespace asmith { namespace serial {
+	
+	class xml_parser {
+	public:
+		virtual ~xml_parser(){}
+
+		virtual void begin_element(const char*) = 0;
+		virtual void end_element(const char*) = 0;
+
+		virtual void begin_comment() = 0;
+		virtual void end_comment() = 0;
+
+		virtual void add_attribute(const char*, const char*) = 0;
+		virtual void add_body(const char*) = 0;
+	};
 
 	//! \todo Remove illegal characters in xml
 
