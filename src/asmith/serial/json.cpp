@@ -57,11 +57,22 @@ namespace asmith { namespace serial {
 	value json_read_value(std::istream&);
 
 	value json_read_null(std::istream& aStream) {
-
+		char buf[4];
+		aStream.read(buf, 4);
+		if(memcmp(buf, "null", 4) != 0) throw std::runtime_error("asmith::json_format::read_serial : Expected 'null'");
+		return value();
 	}
 
 	value json_read_bool(std::istream& aStream) {
-
+		char buf[5];
+		aStream.read(buf, 4);
+		if(memcmp(buf, "true", 4) == 0) {
+			return value(true);
+		}else if(memcmp(buf, "fals", 4) == 0) {
+			aStream.read(buf, 1);
+			if(buf[0] == 'e') return value(false);
+		}
+		throw std::runtime_error("asmith::json_format::read_serial : Expected 'true' or 'false'");
 	}
 
 	value json_read_number(std::istream& aStream) {
