@@ -57,6 +57,8 @@ namespace asmith { namespace serial {
 	value json_read_value(std::istream&);
 
 	value json_read_null(std::istream& aStream) {
+		json_skip_whitespace(aStream);
+
 		char buf[4];
 		aStream.read(buf, 4);
 		if(memcmp(buf, "null", 4) != 0) throw std::runtime_error("asmith::json_format::read_serial : Expected 'null'");
@@ -64,6 +66,8 @@ namespace asmith { namespace serial {
 	}
 
 	value json_read_bool(std::istream& aStream) {
+		json_skip_whitespace(aStream);
+
 		char buf[5];
 		aStream.read(buf, 4);
 		if(memcmp(buf, "true", 4) == 0) {
@@ -76,19 +80,42 @@ namespace asmith { namespace serial {
 	}
 
 	value json_read_number(std::istream& aStream) {
+		json_skip_whitespace(aStream);
 
+		static const auto is_number = [](const char c)->bool {
+			return (c >= '0' && c <= '9') || c == '+' || c == '-' || c == '.' || c == 'e' || c == 'E';
+		};
+
+		char buf[32];
+		size_t s = 0;
+		char c = aStream.peek();
+		while(is_number(c)) {
+			buf[s++] = c;
+			aStream.read(&c, 1);
+		}
+		buf[s] = '\0';
+		return value(atof(buf));
 	}
 
 	value json_read_string(std::istream& aStream) {
+		json_skip_whitespace(aStream);
 
+		//! \todo Implement
+		return value();
 	}
 
 	value json_read_array(std::istream& aStream) {
+		json_skip_whitespace(aStream);
 
+		//! \todo Implement
+		return value();
 	}
 
 	value json_read_object(std::istream& aStream) {
+		json_skip_whitespace(aStream);
 
+		//! \todo Implement
+		return value();
 	}
 
 	value json_read_value(std::istream& aStream) {
