@@ -170,6 +170,45 @@ namespace asmith { namespace serial {
 	}
 
 	value xml_format::read_serial(std::istream& aStream) {
+		class serial_xml_parser : public xml_parser {
+		private:
+			std::vector<value*> mValueStack;
+			std::vector<std::string> mElementName;
+		public:
+			value root;
+			
+			serial_xml_parser() {
+				mValueStack.push_back(&root);
+			}
+			
+			// Inherited from xml_parser
+
+			void begin_element(const char* aName) override {
+				mElementName.push_back(aName);
+			}
+			
+			void end_element(const char*) override {
+				mElementName.pop_back();
+			}
+			
+			void begin_comment() override {
+				
+			}
+			
+			void end_comment() override {
+				
+			}
+			
+			void add_attribute(const char* aName, const char* aValue) override {
+				value::object_t& object = mValueStack.back()->get_object();
+				object.emplace(aName, value(aValue));
+			}
+			
+			void add_body(const char*) override {
+				
+			}
+		};
+		
 		//! \todo Implement
 		return value();
 	}
