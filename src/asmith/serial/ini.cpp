@@ -17,24 +17,26 @@
 	
 namespace asmith { namespace serial {
 
-	static void write_ini(const std::string& aParentName, const std::string& aName, const value& aValue, std::ostream& aStream) {
+	// ini_format
+
+	void ini_format::write_ini(const std::string& aParentName, const std::string& aName, const value& aValue, std::ostream& aStream) {
 		switch(aValue.get_type()) {
 		case value::NULL_T:
-			aStream << aName << '=' << "null" << std::endl;
+			aStream << aName << mNameSeperator << "null" << std::endl;
 			break;
 		case value::BOOL_T:
-			aStream << aName << '=' << (aValue.get_bool() ? "true" : "false") << std::endl;
+			aStream << aName << mNameSeperator << (aValue.get_bool() ? "true" : "false") << std::endl;
 			break;
 		case value::NUMBER_T:
-			aStream << aName << '=' << aValue.get_number() << std::endl;
+			aStream << aName << mNameSeperator << aValue.get_number() << std::endl;
 			break;
 		case value::STRING_T:
-			aStream << aName << '=' << aValue.get_string() << std::endl;
+			aStream << aName << mNameSeperator << aValue.get_string() << std::endl;
 			break;
 		case value::ARRAY_T:
 			{
 				const value::array_t& array_ = aValue.get_array();
-				const std::string parentName = aParentName == "" ? aName : aParentName + "." + aName;
+				const std::string parentName = aParentName == "" ? aName : aParentName + mHierarchySeperator + aName;
 				if(parentName != "") aStream << '[' << parentName << ']' << std::endl;
 				size_t j = 0;
 				for(const auto& i : array_) {
@@ -53,7 +55,7 @@ namespace asmith { namespace serial {
 		case value::OBJECT_T:
 			{
 				const value::object_t& object = aValue.get_object();
-				const std::string parentName = aParentName == "" ? aName : aParentName + "." + aName;
+				const std::string parentName = aParentName == "" ? aName : aParentName + mHierarchySeperator + aName;
 				if(parentName != "") aStream << '[' << parentName << ']' << std::endl;
 				for(const auto& i : object) {
 					const value::type t = i.second.get_type();
@@ -70,11 +72,36 @@ namespace asmith { namespace serial {
 		}
 	}
 
+	ini_format::ini_format() :
+		mHierarchySeperator('.'),
+		mNameSeperator('='),
+		mCommentSymbol(';')
+	{}
+
+	ini_format& ini_format::set_hierarchy_seperator(char aSeperator) {
+		mHierarchySeperator = aSeperator;
+		return *this;
+	}
+
+	ini_format& ini_format::set_name_seperator(char aSeperator) {
+		mNameSeperator = aSeperator;
+		return *this;
+	}
+
+	ini_format& ini_format::set_comment_symbol(char aSymbol) {
+		mCommentSymbol = aSymbol;
+		return *this;
+	}
+
 	void ini_format::write_serial(const value& aValue, std::ostream& aStream) {
 		write_ini("", "", aValue, aStream);
 	}
 	
 	value ini_format::read_serial(std::istream& aStream) {
+		//! \todo Handle comments
+		//! \todo Handle escape characters
+		//! \todo Option for quoted strings
+
 		std::vector<std::pair<std::string, std::string>> values;
 		std::string section = "";
 		std::string buf;
@@ -115,7 +142,7 @@ namespace asmith { namespace serial {
 					c = line.peek();
 				}
 
-				values.push_back({section  + "." + name, value});
+				values.push_back({section  + mHierarchySeperator + name, value});
 			}
 		}
 
@@ -127,7 +154,7 @@ namespace asmith { namespace serial {
 			const std::string& val = i.second;
 
 			while(true) {
-				auto j = key.find(".");
+				auto j = key.find(mHierarchySeperator);
 				if(j == 0) {
 					if(head->get_type() != value::OBJECT_T) head->set_object();
 					value::object_t& object = head->get_object();
@@ -148,7 +175,7 @@ namespace asmith { namespace serial {
 					}else {
 						head = &k->second;
 					}
-					key.erase(0,j+1);
+					key.erase(0, j + 1);
 				}
 			}
 		}

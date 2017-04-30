@@ -19,7 +19,19 @@
 namespace asmith {
 	namespace serial {
 		class ini_format : public format {
+		private:
+			char mHierarchySeperator;
+			char mNameSeperator;
+			char mCommentSymbol;
+
+			void write_ini(const std::string&, const std::string&, const value&, std::ostream&);
 		public:
+			ini_format();
+
+			ini_format& set_hierarchy_seperator(char);
+			ini_format& set_name_seperator(char);
+			ini_format& set_comment_symbol(char);
+
 			// Inherited from format
 
 			void write_serial(const value&, std::ostream&) override;
