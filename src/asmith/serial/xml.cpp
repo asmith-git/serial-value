@@ -120,11 +120,15 @@ namespace asmith { namespace serial {
 		c = aStream.peek();
 		if(c == '<') {
 			// Read child elements
-			aStream.read(&c, 1);
-			c = aStream.peek();
-			aStream.putback('<');
-			if(c != '/') {
-				read_xml(aParser, aStream);
+			while(true){
+				aStream.read(&c, 1);
+				c = aStream.peek();
+				aStream.putback('<');
+				if(c == '/') {
+					break;
+				}else {
+					read_xml(aParser, aStream);
+				}
 			}
 		}else {
 			// Read body
