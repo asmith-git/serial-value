@@ -98,14 +98,47 @@ namespace asmith { namespace serial {
 	}
 	
 	value ini_format::read_serial(std::istream& aStream) {
-		//! \todo Handle comments
-		//! \todo Handle escape characters
-		//! \todo Option for quoted strings
+		////! \todo Handle comments
+		////! \todo Handle escape characters
+		////! \todo Option for quoted strings
 
-		std::vector<std::pair<std::string, std::string>> values;
+		value root;
+		value::object_t& rootObject = root.set_object();
+
+		//std::vector<std::pair<std::string, std::string>> values;
 		std::string section = "";
 		std::string buf;
 		char c;
+
+		const auto convert_to_serial = [&](std::string aKey, const std::string aValue) {
+			value* head = &root;
+
+			while(true) {
+				auto j = aKey.find(mHierarchySeperator);
+				if(j == 0) {
+					if(head->get_type() != value::OBJECT_T) head->set_object();
+					value::object_t& object = head->get_object();
+					aKey.erase(aKey.begin());
+					object.emplace(aKey, value(aValue));
+					break;
+				}else if (j == std::string::npos) {
+					if(head->get_type() != value::OBJECT_T) head->set_object();
+					value::object_t& object = head->get_object();
+					object.emplace(aKey, value(aValue));
+					break;
+				}else {
+					const std::string next = aKey.substr(0, j);
+					value::object_t& object = head->get_object();
+					auto k = object.find(next);
+					if(k == object.end()) {
+						head = &object.emplace(next, value()).first->second;
+					}else {
+						head = &k->second;
+					}
+					aKey.erase(0, j + 1);
+				}
+			}
+		};
 
 		// Read sections
 		while(!aStream.eof()) {
@@ -142,41 +175,7 @@ namespace asmith { namespace serial {
 					c = line.peek();
 				}
 
-				values.push_back({section  + mHierarchySeperator + name, value});
-			}
-		}
-
-		value root;
-		value::object_t& rootObject = root.set_object();
-		for(auto& i : values) {
-			value* head = &root;
-			std::string& key = i.first;
-			const std::string& val = i.second;
-
-			while(true) {
-				auto j = key.find(mHierarchySeperator);
-				if(j == 0) {
-					if(head->get_type() != value::OBJECT_T) head->set_object();
-					value::object_t& object = head->get_object();
-					key.erase(key.begin());
-					object.emplace(key, value(val));
-					break;
-				}else if (j == std::string::npos) {
-					if(head->get_type() != value::OBJECT_T) head->set_object();
-					value::object_t& object = head->get_object();
-					object.emplace(key, value(val));
-					break;
-				}else {
-					const std::string next = key.substr(0, j);
-					value::object_t& object = head->get_object();
-					auto k = object.find(next);
-					if(k == object.end()) {
-						head = &object.emplace(next, value()).first->second;
-					}else {
-						head = &k->second;
-					}
-					key.erase(0, j + 1);
-				}
+				convert_to_serial(section + mHierarchySeperator + name, value);
 			}
 		}
 
