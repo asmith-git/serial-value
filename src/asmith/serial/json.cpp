@@ -12,20 +12,12 @@
 //	limitations under the License.
 
 #include "asmith/serial/json.hpp"
-#include <cctype>
+#include "asmith/serial/string_tools.hpp"
 	
 namespace asmith { namespace serial {
 
-	void json_skip_whitespace(std::istream& aStream) {
-		char c = aStream.peek();
-		while(std::isspace(c)) {
-			aStream.read(&c, 1);
-			c = aStream.peek();
-		}
-	}
-
 	value::type json_determine_type(std::istream& aStream) {
-		json_skip_whitespace(aStream);
+		skip_whitespace(aStream);
 		char c = aStream.peek();
 		switch(c) {
 		case 'n':
@@ -60,7 +52,7 @@ namespace asmith { namespace serial {
 	value json_read_value(std::istream&);
 
 	value json_read_null(std::istream& aStream) {
-		json_skip_whitespace(aStream);
+		skip_whitespace(aStream);
 
 		char buf[4];
 		aStream.read(buf, 4);
@@ -69,7 +61,7 @@ namespace asmith { namespace serial {
 	}
 
 	value json_read_bool(std::istream& aStream) {
-		json_skip_whitespace(aStream);
+		skip_whitespace(aStream);
 
 		char buf[5];
 		aStream.read(buf, 4);
@@ -83,7 +75,7 @@ namespace asmith { namespace serial {
 	}
 
 	value json_read_number(std::istream& aStream) {
-		json_skip_whitespace(aStream);
+		skip_whitespace(aStream);
 
 		static const auto is_number = [](const char c)->bool {
 			return (c >= '0' && c <= '9') || c == '+' || c == '-' || c == '.' || c == 'e' || c == 'E';
@@ -102,7 +94,7 @@ namespace asmith { namespace serial {
 	}
 
 	value json_read_string(std::istream& aStream) {
-		json_skip_whitespace(aStream);
+		skip_whitespace(aStream);
 
 		char c = aStream.peek();
 		if(c != '"') throw std::runtime_error("asmith::json_format::read_serial : Expected string to begin with '\"'");
@@ -124,12 +116,12 @@ namespace asmith { namespace serial {
 	}
 
 	value json_read_array(std::istream& aStream) {
-		json_skip_whitespace(aStream);
+		skip_whitespace(aStream);
 
 		char c = aStream.peek();
 		if(c != '[') throw std::runtime_error("asmith::json_format::read_serial : Expected array to begin with '['");
 		aStream.read(&c, 1);
-		json_skip_whitespace(aStream);
+		skip_whitespace(aStream);
 
 		value tmp;
 		value::array_t& array_ = tmp.set_array();
@@ -138,12 +130,12 @@ namespace asmith { namespace serial {
 		while(c != ']') {
 			if(aStream.eof()) throw std::runtime_error("asmith::json_format::read_serial : Expected array to end with ']'");
 			array_.push_back(json_read_value(aStream));
-			json_skip_whitespace(aStream);
+			skip_whitespace(aStream);
 			c = aStream.peek();
 			if(c == ']') break;
 			else if(c != ',') throw std::runtime_error("asmith::json_format::read_serial : Expected array elements to be seperated with ','");
 			aStream.read(&c, 1);
-			json_skip_whitespace(aStream);
+			skip_whitespace(aStream);
 		}
 		aStream.read(&c, 1);
 
@@ -151,12 +143,12 @@ namespace asmith { namespace serial {
 	}
 
 	value json_read_object(std::istream& aStream) {
-		json_skip_whitespace(aStream);
+		skip_whitespace(aStream);
 
 		char c = aStream.peek();
 		if(c != '{') throw std::runtime_error("asmith::json_format::read_serial : Expected object to begin with '{'");
 		aStream.read(&c, 1);
-		json_skip_whitespace(aStream);
+		skip_whitespace(aStream);
 
 		value tmp;
 		value::object_t& object = tmp.set_object();
@@ -165,17 +157,17 @@ namespace asmith { namespace serial {
 		while(c != '}') {
 			if(aStream.eof()) throw std::runtime_error("asmith::json_format::read_serial : Expected object to end with '}'");
 			const value::string_t name = json_read_string(aStream).get_string();
-			json_skip_whitespace(aStream);
+			skip_whitespace(aStream);
 			aStream.read(&c, 1);
 			if(c != ':') throw std::runtime_error("asmith::json_format::read_serial : Expected object name to be end with ':'");
-			json_skip_whitespace(aStream);
+			skip_whitespace(aStream);
 			object.emplace(name, json_read_value(aStream));
-			json_skip_whitespace(aStream);
+			skip_whitespace(aStream);
 			c = aStream.peek();
 			if(c == '}') break;
 			else if(c != ',') throw std::runtime_error("asmith::json_format::read_serial : Expected object elements to be seperated with ','");
 			aStream.read(&c, 1);
-			json_skip_whitespace(aStream);
+			skip_whitespace(aStream);
 		}
 		aStream.read(&c, 1);
 

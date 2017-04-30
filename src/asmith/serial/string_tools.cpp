@@ -12,15 +12,24 @@
 //	limitations under the License.
 
 #include "asmith/serial/string_tools.hpp"
+#include <cctype>
 	
 namespace asmith { namespace serial {
 
-	static void string_replacement(std::string& aStr, const std::string& aTarget, const std::string& aReplacement) {
+	void string_replacement(std::string& aStr, const std::string& aTarget, const std::string& aReplacement) {
 	    size_t i = aStr.find(aTarget);
 	    while(i != std::string::npos) {
-		aStr.replace(i, aTarget.size(), aReplacement);
-		i = aStr.find(aTarget, i+aReplacement.size());
+			aStr.replace(i, aTarget.size(), aReplacement);
+			i = aStr.find(aTarget, i+aReplacement.size());
 	    }
+	}
+
+	void skip_whitespace(std::istream& aStream) {
+		char c = aStream.peek();
+		while (std::isspace(c)) {
+			aStream.read(&c, 1);
+			c = aStream.peek();
+		}
 	}
 
 }}

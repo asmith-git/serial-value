@@ -12,12 +12,14 @@
 //	limitations under the License.
 
 #include <string>
+#include <iostream>
 
 #ifndef ASMITH_SERIAL_STRING_TOOLS_HPP
 #define ASMITH_SERIAL_STRING_TOOLS_HPP
 	
 namespace asmith { namespace serial {
 	void string_replacement(std::string&, const std::string&, const std::string&);
+	void skip_whitespace(std::istream&);
 }}
 
 #endif

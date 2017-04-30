@@ -39,13 +39,13 @@ namespace asmith { namespace serial {
 	};
 
 	static void xml_encode_string(std::string& aStr) {
-	    for(const std::string i[2] : XML_ILLEGAL) {
+	    for(const std::string* i : XML_ILLEGAL) {
 			string_replacement(aStr, i[0], i[1]);
 	    }
 	}
 
 	static void xml_decode_string(std::string& aStr) {
-	    for(const std::string i[2] : XML_ILLEGAL) {
+	    for(const std::string* i : XML_ILLEGAL) {
 			string_replacement(aStr, i[1], i[0]);
 	    }
 	}
