@@ -85,16 +85,18 @@ namespace asmith { namespace serial {
 			c = aStream.peek();
 			if(c != '"') throw std::runtime_error("asmith::serial::read_xml : Expected attribute to begin with '\"'");
 			aStream.read(&c, 1);
+			c = aStream.peek();
 
-			while (c != '>') {
+			while (c != '"') {
 				if(attibValueLength >= 2048) throw std::runtime_error("asmith::serial::read_xml : Attribute value too long");
 				attribValue[attibValueLength++] = c;
 				aStream.read(&c, 1);
 				c = aStream.peek();
 			}
 			attribValue[attibValueLength] = '\0';
-			if (c != '"') throw std::runtime_error("asmith::serial::read_xml : Expected attribute to end with '\"'");
+			if(c != '"') throw std::runtime_error("asmith::serial::read_xml : Expected attribute to end with '\"'");
 			aStream.read(&c, 1);
+			c = aStream.peek();
 
 			// Parse attribute
 			aParser.add_attribute(attribName, attribValue);
@@ -114,6 +116,8 @@ namespace asmith { namespace serial {
 			return;
 		}else if (c == '>') {
 			aStream.read(&c, 1);
+		}else {
+			if(c != '>') throw std::runtime_error("asmith::serial::read_xml : Expected tag to end with '>'");
 		}
 
 		skip_whitespace(aStream);
@@ -134,7 +138,7 @@ namespace asmith { namespace serial {
 			// Read body
 			std::string body;
 
-			while (c != '>') {
+			while(c != '<') {
 				body += c;
 				aStream.read(&c, 1);
 				c = aStream.peek();
@@ -146,14 +150,17 @@ namespace asmith { namespace serial {
 		// Open tag		
 		skip_whitespace(aStream);
 		c = aStream.peek();
-		if (c != '<') throw std::runtime_error("asmith::serial::read_xml : Expected tag to begin with '<'");
+		if(c != '<') throw std::runtime_error("asmith::serial::read_xml : Expected tag to begin with '</'");
+		aStream.read(&c, 1);
+		c = aStream.peek();
+		if (c != '/') throw std::runtime_error("asmith::serial::read_xml : Expected tag to begin with '</'");
 		aStream.read(&c, 1);
 
 		// Read name
 		size_t nameLength2 = 0;
 		skip_whitespace(aStream);
 		c = aStream.peek();
-		while (!(std::isspace(c) || c == '/' || c == '>')) {
+		while(!(std::isspace(c) || c == '>')) {
 			aStream.read(&c, 1);
 			if(nameBuf[nameLength2++] != c)  throw std::runtime_error("asmith::serial::read_xml : Expected starting and ending tags to have the same name");
 			c = aStream.peek();
@@ -293,11 +300,11 @@ namespace asmith { namespace serial {
 			// Inherited from xml_parser
 
 			void begin_element(const char* aName) override {
-				mElementName.push_back(aName);
+				//mElementName.push_back(aName);
 			}
 			
 			void end_element(const char*) override {
-				mElementName.pop_back();
+				//mElementName.pop_back();
 			}
 			
 			void begin_comment() override {
@@ -309,8 +316,8 @@ namespace asmith { namespace serial {
 			}
 			
 			void add_attribute(const char* aName, const char* aValue) override {
-				value::object_t& object = mValueStack.back()->get_object();
-				object.emplace(aName, value(aValue));
+				//value::object_t& object = mValueStack.back()->get_object();
+				//object.emplace(aName, value(aValue));
 			}
 			
 			void add_body(const char*) override {
