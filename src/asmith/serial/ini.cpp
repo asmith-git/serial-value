@@ -14,8 +14,62 @@
 #include "asmith/serial/ini.hpp"
 	
 namespace asmith { namespace serial {
-	void ini_format::write_serial(const value& aType, std::ostream& aStream) {
-		//! \todo Implement
+
+	static void write_ini(const std::string& aParentName, const std::string& aName, const value& aValue, std::ostream& aStream) {
+		switch(aValue.get_type()) {
+		case value::NULL_T:
+			aStream << aName << '=' << "null" << std::endl;
+			break;
+		case value::BOOL_T:
+			aStream << aName << '=' << (aValue.get_bool() ? "true" : "false") << std::endl;
+			break;
+		case value::NUMBER_T:
+			aStream << aName << '=' << aValue.get_number() << std::endl;
+			break;
+		case value::STRING_T:
+			aStream << aName << '=' << aValue.get_string() << std::endl;
+			break;
+		case value::ARRAY_T:
+			{
+				const value::array_t& array_ = aValue.get_array();
+				const std::string parentName = aParentName == "" ? aName : aParentName + "." + aName;
+				if(parentName != "") aStream << '[' << parentName << ']' << std::endl;
+				size_t j = 0;
+				for(const auto& i : array_) {
+					const value::type t = i.get_type();
+					if(t != value::ARRAY_T && t != value::OBJECT_T) write_ini(parentName, std::to_string(j), i, aStream);
+					++j;
+				}
+				j = 0;
+				for(const auto& i : array_) {
+					const value::type t = i.get_type();
+					if(t == value::ARRAY_T || t == value::OBJECT_T) write_ini(parentName, std::to_string(j), i, aStream);
+					++j;
+				}
+			}
+			break;
+		case value::OBJECT_T:
+			{
+				const value::object_t& object = aValue.get_object();
+				const std::string parentName = aParentName == "" ? aName : aParentName + "." + aName;
+				if(parentName != "") aStream << '[' << parentName << ']' << std::endl;
+				for(const auto& i : object) {
+					const value::type t = i.second.get_type();
+					if(t != value::ARRAY_T && t != value::OBJECT_T) write_ini(parentName, i.first, i.second, aStream);
+				}
+				for(const auto& i : object) {
+					const value::type t = i.second.get_type();
+					if(t == value::ARRAY_T || t == value::OBJECT_T) write_ini(parentName, i.first, i.second, aStream);
+				}
+			}
+			break;
+		default:
+			throw 0;
+		}
+	}
+
+	void ini_format::write_serial(const value& aValue, std::ostream& aStream) {
+		write_ini("", "", aValue, aStream);
 	}
 	
 	value ini_format::read_serial(std::istream& aStream) {
