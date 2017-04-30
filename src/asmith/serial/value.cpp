@@ -332,11 +332,13 @@ namespace asmith { namespace serial {
 				return a.mNumber < b.mNumber;
 			});
 
+			j = object.begin();
 			for(size_t i = 0; i < s; ++i, ++j) {
 				if(array_[i].mNumber != static_cast<number_t>(i)) throw std::runtime_error("value : Value is not convertable to array");
 			}
 
 			// Copy values to arrayj = object.begin();
+			j = object.begin();
 			for(size_t i = 0; i < s; ++i, ++j) {
 				array_[atoi(j->first.c_str())] = j->second;
 			}
