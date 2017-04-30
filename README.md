@@ -2,6 +2,7 @@
 1. Semi-automated serialisation for C++ classes
 2. JSON Support
 3. XML Support
+4. INI Support
 
 ## Serialization of C++ Classes
 ```C++
@@ -73,6 +74,9 @@ json_format().write<objective_function>(myObject, std::ofstream("myObject.json")
 // Write the object into a XML file
 xml_format().write<objective_function>(myObject, std::ofstream("myObject.xml"));
 
+// Write the object into a INI file
+ini_format().write<objective_function>(myObject, std::ofstream("myObject.ini"));
+
 // Read the object from a binary file
 objective_function binaryObject = binary_format().read<objective_function>(std::ifstream("myObject.bin"));
 
@@ -81,6 +85,9 @@ objective_function jsonObject = json_format().read<objective_function>(std::ifst
 
 // Read the object from a XML file
 objective_function xmlObject = xml_format().read<objective_function>(std::ifstream("myObject.xml"));
+
+// Read the object from a INI file
+objective_function iniObject = ini_format().read<objective_function>(std::ifstream("myObject.ini"));
 ```
 
 ## Sample JSON Output
@@ -112,4 +119,17 @@ objective_function xmlObject = xml_format().read<objective_function>(std::ifstre
 		<1>5.12</1>
 	</upper_bounds>
 </xml>
+```
+
+## Sample INI Output
+```C++
+dimensions=2
+minimise=true
+name=De Jong 1
+[lower_bounds]
+0=-5.12
+1=-5.12
+[upper_bounds]
+0=5.12
+1=5.12
 ```
