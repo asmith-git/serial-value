@@ -22,7 +22,7 @@ struct asmith::serial::serialiser<objective_function> {
 	typedef const objective_function& input_t;  // This is the type that is converted
 	typedef objective_function output_t;        // This is the type that is produced from deserialisation
 
-  // This function serialises the class
+  	// This function serialises the class
 	static inline value serialise(input_t aValue) throw() { 
 		value tmp;
 		value::object_t& object = tmp.set_object();
@@ -36,7 +36,7 @@ struct asmith::serial::serialiser<objective_function> {
 		return tmp;
 	}
 
-  // This function deserialises the class
+  	// This function deserialises the class
 	static inline output_t deserialise(const value& aValue) throw() { 
 		output_t tmp;
 		const value::object_t& object = aValue.get_object();
@@ -46,7 +46,7 @@ struct asmith::serial::serialiser<objective_function> {
 			auto_deserialise("upper_bounds",  tmp.upper_bounds)
 			auto_deserialise("dimensions",    tmp.dimensions)
 			auto_deserialise("minimise",      tmp.minimise)
-		#undef auto_serialise
+		#undef auto_deserialise
 		return tmp;
 	}
 };
