@@ -38,6 +38,8 @@ namespace asmith { namespace serial {
 	}
 
 	void read_xml(xml_parser& aParser, std::istream& aStream) {
+		//! \todo Handle XML comments
+
 		char c;
 		char nameBuf[256];
 		size_t nameLength = 0;
@@ -290,21 +292,32 @@ namespace asmith { namespace serial {
 		private:
 			std::vector<value*> mValueStack;
 			std::vector<std::string> mElementName;
+			bool mFirstElement;
 		public:
 			value root;
 			
-			serial_xml_parser() {
-				mValueStack.push_back(&root);
-			}
+			serial_xml_parser() :
+				mFirstElement(true)
+			{}
 			
 			// Inherited from xml_parser
 
 			void begin_element(const char* aName) override {
-				//mElementName.push_back(aName);
+				if(mFirstElement) {
+					mFirstElement = false;
+					mValueStack.push_back(&root);
+					root.set_object();
+				}else {
+					mValueStack.push_back(
+						&mValueStack.back()->get_object().emplace(aName, value(value::OBJECT_T)).first->second
+					);
+				}
+				mElementName.push_back(aName);
 			}
 			
 			void end_element(const char*) override {
-				//mElementName.pop_back();
+				mValueStack.pop_back();
+				mElementName.pop_back();
 			}
 			
 			void begin_comment() override {
@@ -316,17 +329,21 @@ namespace asmith { namespace serial {
 			}
 			
 			void add_attribute(const char* aName, const char* aValue) override {
-				//value::object_t& object = mValueStack.back()->get_object();
-				//object.emplace(aName, value(aValue));
+				value::object_t& object = mValueStack.back()->get_object();
+				object.emplace(aName, value(aValue));
 			}
 			
-			void add_body(const char*) override {
-				
+			void add_body(const char* aStr) override {
+				//! \todo Check for attributes
+				mValueStack.back()->set_string() = aStr;
 			}
 		};
 
 		serial_xml_parser parser;
 		read_xml(parser, aStream);
+
+		//! \todo Collapse objects into arrays
+
 		return parser.root;
 	}
 }}
