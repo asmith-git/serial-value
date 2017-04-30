@@ -72,6 +72,9 @@ namespace asmith { namespace serial {
 		c = aStream.peek();
 		while(c != '/' && c != '>') {
 			// Read name
+			skip_whitespace(aStream);
+			c = aStream.peek();
+
 			while(c != '=') {
 				if(attribNameLength >= 256) throw std::runtime_error("asmith::serial::read_xml : Attribute name too long");
 
