@@ -36,6 +36,36 @@ namespace asmith { namespace serial {
 		mType(NULL_T)
 	{}
 
+	value::value(const type aType) throw() :
+		mType(NULL_T)
+	{
+		switch(aType) {
+		case NULL_T:
+			set_null();
+			break;
+		case BOOl_T:
+			set_bool();
+			break;
+		case CHAR_T:
+			set_char() ;
+			break;
+		case NUMBER_T:
+			set_number();
+			break;
+		case STRING_T:
+			set_string();
+			break;
+		case ARRAY_T:
+			set_array();
+			break;
+		case OBJECT_T:
+			set_object();
+			break;
+		default:
+			break;
+		}
+	}
+
 	value::value(const value& aOther) throw() :
 		mType(NULL_T)
 	{

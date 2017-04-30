@@ -51,6 +51,7 @@ namespace asmith { namespace serial {
 		type mType;
 	public:
 		value() throw();
+		value(const type) throw();
 		value(const value&) throw();
 		value(value&&) throw();
 		value(bool) throw();
