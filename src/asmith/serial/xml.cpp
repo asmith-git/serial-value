@@ -12,6 +12,7 @@
 //	limitations under the License.
 
 #include "asmith/serial/xml.hpp"
+#include <cctype>
 #include "asmith/serial/string_tools.hpp"
 	
 namespace asmith { namespace serial {
@@ -37,13 +38,83 @@ namespace asmith { namespace serial {
 	}
 
 	void read_xml(xml_parser& aParser, std::istream& aStream) {
+		char c;
+		char nameBuf[256];
+		size_t nameLength = 0;
+
 		// Open tag
+		skip_whitespace(aStream);
+		c = aStream.peek();
+		if(c != '<') throw std::runtime_error("asmith::serial::read_xml : Expected tag to begin with '<'");
+		aStream.read(&c, 1);
 
 		// Read name
+		skip_whitespace(aStream);
+		c = aStream.peek();
+		while(! (std::isspace(c) || c == '/' || c == '>')) {
+			if(nameLength >= 256) throw std::runtime_error("asmith::serial::read_xml : Element name too long");
+			aStream.read(&c, 1);
+			nameBuf[nameLength++] = c;
+			c = aStream.peek();
+		}
+		nameBuf[nameLength] = '\0';
+		aParser.begin_element(nameBuf);
 
 		// Read attributes
+		char attribName[256];
+		char attribValue[2048];
+		size_t attribNameLength = 0;
+		size_t attibValueLength = 0;
+
+		skip_whitespace(aStream);
+		c = aStream.peek();
+		while(c != '/' && c != '>') {
+			// Read name
+			while(c != '=') {
+				if(attribNameLength >= 256) throw std::runtime_error("asmith::serial::read_xml : Attribute name too long");
+
+				attribName[attribNameLength++] = c;
+				aStream.read(&c, 1);
+				c = aStream.peek();
+			}
+			attribName[attribNameLength] = '\0';
+			aStream.read(&c, 1);
+
+			// Read value
+			skip_whitespace(aStream);
+			c = aStream.peek();
+			if(c != '"') throw std::runtime_error("asmith::serial::read_xml : Expected attribute to begin with '\"'");
+			aStream.read(&c, 1);
+
+			while (c != '>') {
+				if(attibValueLength >= 2048) throw std::runtime_error("asmith::serial::read_xml : Attribute value too long");
+				attribValue[attibValueLength++] = c;
+				aStream.read(&c, 1);
+				c = aStream.peek();
+			}
+			attribValue[attibValueLength] = '\0';
+			if (c != '"') throw std::runtime_error("asmith::serial::read_xml : Expected attribute to end with '\"'");
+			aStream.read(&c, 1);
+
+			// Parse attribute
+			aParser.add_attribute(attribName, attribValue);
+			attribNameLength = 0;
+			attibValueLength = 0;
+		}
 
 		// Close tag
+		skip_whitespace(aStream);
+		c = aStream.peek();
+		if(c == '/') {
+			aStream.read(&c, 1);
+			c = aStream.peek();
+			aStream.read(&c, 1);
+			if(c != '>') throw std::runtime_error("asmith::serial::read_xml : Expected tag to end with '>'");
+			aParser.end_element(nameBuf);
+			return;
+		}else if (c == '>') {
+			aStream.read(&c, 1);
+		}
 
 		// Read body
 
@@ -54,6 +125,7 @@ namespace asmith { namespace serial {
 		// Read name
 
 		// Close tag
+		aParser.end_element(nameBuf);
 	}
 
 	static void xml_write_internal(const value& aType, std::ostream& aStream) {
