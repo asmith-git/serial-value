@@ -337,15 +337,13 @@ namespace asmith { namespace serial {
 			}
 			
 			void add_body(const char* aStr) override {
-				//! \todo Check for attributes
+				if(mValueStack.back()->size() > 0) throw std::runtime_error("asmith::xml_format::read_serial : Cannot parse XML element with both attributes and a body");
 				mValueStack.back()->set_string() = aStr;
 			}
 		};
 
 		serial_xml_parser parser;
 		read_xml(parser, aStream);
-
-		//! \todo Collapse objects into arrays
 
 		return parser.root;
 	}
