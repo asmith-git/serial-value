@@ -21,6 +21,22 @@ namespace asmith { namespace serial {
 		void write_serial(const value&, std::ostream&) override;
 		value read_serial(std::istream&) override;
 	};
+
+	class xml_parser {
+	public:
+		virtual ~xml_parser() {}
+
+		virtual void begin_element(const char*) = 0;
+		virtual void end_element(const char*) = 0;
+
+		virtual void begin_comment() = 0;
+		virtual void end_comment() = 0;
+
+		virtual void add_attribute(const char*, const char*) = 0;
+		virtual void add_body(const char*) = 0;
+	};
+
+	void read_xml(xml_parser&, std::istream&);
 }}
 
 #endif

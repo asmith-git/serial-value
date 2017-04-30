@@ -16,20 +16,6 @@
 	
 namespace asmith { namespace serial {
 	
-	class xml_parser {
-	public:
-		virtual ~xml_parser(){}
-
-		virtual void begin_element(const char*) = 0;
-		virtual void end_element(const char*) = 0;
-
-		virtual void begin_comment() = 0;
-		virtual void end_comment() = 0;
-
-		virtual void add_attribute(const char*, const char*) = 0;
-		virtual void add_body(const char*) = 0;
-	};
-	
 	static const std::string XML_ILLEGAL[5][2] = {
 		{"&",   "&amp;"},
 		{"<",   "&lt;"},
@@ -38,19 +24,37 @@ namespace asmith { namespace serial {
 		{"'",   "&apos;"}
 	};
 
-	static void xml_encode_string(std::string& aStr) {
+	void xml_encode_string(std::string& aStr) {
 	    for(const std::string* i : XML_ILLEGAL) {
 			string_replacement(aStr, i[0], i[1]);
 	    }
 	}
 
-	static void xml_decode_string(std::string& aStr) {
+	void xml_decode_string(std::string& aStr) {
 	    for(const std::string* i : XML_ILLEGAL) {
 			string_replacement(aStr, i[1], i[0]);
 	    }
 	}
 
-	//! \todo Remove illegal characters in xml
+	void read_xml(xml_parser& aParser, std::istream& aStream) {
+		// Open tag
+
+		// Read name
+
+		// Read attributes
+
+		// Close tag
+
+		// Read body
+
+		// Read child elements
+
+		// Open tag
+
+		// Read name
+
+		// Close tag
+	}
 
 	static void xml_write_internal(const value& aType, std::ostream& aStream) {
 		const value::type tBuf = aType.get_type();
@@ -201,8 +205,9 @@ namespace asmith { namespace serial {
 				
 			}
 		};
-		
-		//! \todo Implement
-		return value();
+
+		serial_xml_parser parser;
+		read_xml(parser, aStream);
+		return parser.root;
 	}
 }}
