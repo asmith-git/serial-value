@@ -44,7 +44,7 @@ namespace asmith { namespace serial {
 		case NULL_T:
 			set_null();
 			break;
-		case BOOl_T:
+		case BOOL_T:
 			set_bool();
 			break;
 		case CHAR_T:
@@ -88,7 +88,7 @@ namespace asmith { namespace serial {
 		case NULL_T:
 			set_null();
 			break;
-		case BOOl_T:
+		case BOOL_T:
 			set_bool() = aOther.mBool;
 			break;
 		case CHAR_T:
@@ -127,7 +127,7 @@ namespace asmith { namespace serial {
 		switch (mType) {
 		case NULL_T:
 			return true;
-		case BOOl_T:
+		case BOOL_T:
 			return mBool == aOther.mBool;
 		case CHAR_T:
 			return mChar == aOther.mChar;
@@ -188,7 +188,7 @@ namespace asmith { namespace serial {
 
 	value::bool_t value::get_bool() const {
 		switch(mType) {
-		case BOOl_T:
+		case BOOL_T:
 			return mBool;
 			break;
 		case CHAR_T:
@@ -240,7 +240,7 @@ namespace asmith { namespace serial {
 
 	value::char_t value::get_char() const {
 		switch(mType) {
-		case BOOl_T:
+		case BOOL_T:
 			return mBool ? '0' : '1';
 			break;
 		case CHAR_T:
@@ -264,7 +264,7 @@ namespace asmith { namespace serial {
 
 	value::number_t value::get_number() const {
 		switch(mType) {
-		case BOOl_T:
+		case BOOL_T:
 			return mBool ? 0.0 : 1.0;
 			break;
 		case CHAR_T:
@@ -289,7 +289,7 @@ namespace asmith { namespace serial {
 
 	value::string_t value::get_string() const {
 		switch(mType) {
-		case BOOl_T:
+		case BOOL_T:
 			return mBool ? "true" : "false";
 			break;
 		case CHAR_T:
@@ -464,7 +464,7 @@ namespace asmith { namespace serial {
 	#undef SV_VALUE
 	#define SV_NAME bool
 	#define SV_TYPE bool_t
-	#define SV_ENUM BOOl_T
+	#define SV_ENUM BOOL_T
 	#define SV_VALUE mBool
 
 	SV_CONSTRUCTOR(bool)

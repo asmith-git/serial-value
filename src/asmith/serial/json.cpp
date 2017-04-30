@@ -24,7 +24,7 @@ namespace asmith { namespace serial {
 			return value::NULL_T;
 		case 't':
 		case 'f':
-			return value::BOOl_T;
+			return value::BOOL_T;
 		case '0':
 		case '1':
 		case '2':
@@ -178,7 +178,7 @@ namespace asmith { namespace serial {
 		switch(json_determine_type(aStream)) {
 		case value::NULL_T:
 			return json_read_null(aStream);
-		case value::BOOl_T:
+		case value::BOOL_T:
 			return json_read_bool(aStream);
 		case value::NUMBER_T:
 			return json_read_number(aStream);
@@ -215,7 +215,7 @@ namespace asmith { namespace serial {
 		case value::NULL_T:
 			aStream << "null";
 			break;
-		case value::BOOl_T:
+		case value::BOOL_T:
 			aStream << (aType.get_bool() ? "true" : "false");
 			break;
 		case value::CHAR_T:

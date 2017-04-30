@@ -32,7 +32,7 @@ namespace asmith { namespace serial {
 		
 		enum type : uint8_t {
 			NULL_T,
-			BOOl_T,
+			BOOL_T,
 			CHAR_T,
 			NUMBER_T,
 			STRING_T,

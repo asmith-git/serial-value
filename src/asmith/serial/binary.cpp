@@ -21,7 +21,7 @@ namespace asmith { namespace serial {
 		switch(tBuf) {
 		case value::NULL_T:
 			break;
-		case value::BOOl_T:
+		case value::BOOL_T:
 			{
 				const value::bool_t buf = aType.get_bool();
 				aStream.write(reinterpret_cast<const char*>(&buf), sizeof(buf));
@@ -83,7 +83,7 @@ namespace asmith { namespace serial {
 		case value::NULL_T:
 			value.set_null();
 			break;
-		case value::BOOl_T:
+		case value::BOOL_T:
 			{
 				value::bool_t buf;
 				aStream.read(reinterpret_cast<char*>(&buf), sizeof(buf));

@@ -187,7 +187,7 @@ namespace asmith { namespace serial {
 		case value::NULL_T:
 			aStream << "null";
 			break;
-		case value::BOOl_T:
+		case value::BOOL_T:
 			aStream << (aType.get_bool() ? "true" : "false");
 			break;
 		case value::CHAR_T:
@@ -225,7 +225,7 @@ namespace asmith { namespace serial {
 			aStream << "/>";
 			closeTag = false;
 			break;
-		case value::BOOl_T:
+		case value::BOOL_T:
 			aStream << ">";
 			aStream << (aType.get_bool() ? "true" : "false");
 			break;
