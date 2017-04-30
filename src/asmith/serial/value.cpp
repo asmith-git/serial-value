@@ -12,6 +12,7 @@
 //	limitations under the License.
 
 #include "asmith/serial/value.hpp"
+#include <algorithm>
 	
 namespace asmith { namespace serial {
 
@@ -314,6 +315,34 @@ namespace asmith { namespace serial {
 		switch(mType) {
 		case ARRAY_T:
 			return *mArray;
+		case OBJECT_T:
+		{
+			value tmp;
+			const object_t& object = *mObject;
+			array_t& array_ = tmp.set_array();
+			const size_t s = object.size();
+
+			// Check if object keys are contiguous indices
+			auto j = object.begin();
+			for(size_t i = 0; i < s; ++i, ++j) {
+				array_.push_back(atof(j->first.c_str()));
+			}
+
+			std::sort(array_.begin(), array_.end(), [](const value& a, const value& b)->bool {
+				return a.mNumber < b.mNumber;
+			});
+
+			for(size_t i = 0; i < s; ++i, ++j) {
+				if(array_[i].mNumber != static_cast<number_t>(i)) throw std::runtime_error("value : Value is not convertable to array");
+			}
+
+			// Copy values to arrayj = object.begin();
+			for(size_t i = 0; i < s; ++i, ++j) {
+				array_[atoi(j->first.c_str())] = j->second;
+			}
+
+			return array_;
+		}
 		default:
 			break;
 		}
