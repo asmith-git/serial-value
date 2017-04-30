@@ -12,6 +12,8 @@
 //	limitations under the License.
 
 #include "asmith/serial/ini.hpp"
+#include <sstream>
+#include "asmith/serial/string_tools.hpp"
 	
 namespace asmith { namespace serial {
 
@@ -73,7 +75,84 @@ namespace asmith { namespace serial {
 	}
 	
 	value ini_format::read_serial(std::istream& aStream) {
-		//! \todo Implement
-		return value();
+		std::vector<std::pair<std::string, std::string>> values;
+		std::string section = "";
+		std::string buf;
+		char c;
+
+		// Read sections
+		while(!aStream.eof()) {
+			std::getline(aStream, buf);
+			if (!aStream) break;
+			std::stringstream line;
+			line << buf;
+
+			skip_whitespace(line);
+			c = line.peek();
+			if(c == '[') {
+				line.read(&c, 1);
+				c = line.peek();
+
+				section = "";
+				while(c != ']') {
+					section += c;
+					line.read(&c, 1);
+					c = line.peek();
+				}
+			}else {
+				std::string name;
+				std::string value;
+				while(c != '=') {
+					name += c;
+					line.read(&c, 1);
+					c = line.peek();
+				}
+				line.read(&c, 1);
+				c = line.peek();
+				while(! line.eof()) {
+					value += c;
+					line.read(&c, 1);
+					c = line.peek();
+				}
+
+				values.push_back({section  + "." + name, value});
+			}
+		}
+
+		value root;
+		value::object_t& rootObject = root.set_object();
+		for(auto& i : values) {
+			value* head = &root;
+			std::string& key = i.first;
+			const std::string& val = i.second;
+
+			while(true) {
+				auto j = key.find(".");
+				if(j == 0) {
+					if(head->get_type() != value::OBJECT_T) head->set_object();
+					value::object_t& object = head->get_object();
+					key.erase(key.begin());
+					object.emplace(key, value(val));
+					break;
+				}else if (j == std::string::npos) {
+					if(head->get_type() != value::OBJECT_T) head->set_object();
+					value::object_t& object = head->get_object();
+					object.emplace(key, value(val));
+					break;
+				}else {
+					const std::string next = key.substr(0, j);
+					value::object_t& object = head->get_object();
+					auto k = object.find(next);
+					if(k == object.end()) {
+						head = &object.emplace(next, value()).first->second;
+					}else {
+						head = &k->second;
+					}
+					key.erase(0,j+1);
+				}
+			}
+		}
+
+		return root;
 	}
 }}
