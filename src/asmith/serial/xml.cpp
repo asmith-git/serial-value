@@ -12,6 +12,7 @@
 //	limitations under the License.
 
 #include "asmith/serial/xml.hpp"
+#include "asmith/serial/string_tools.hpp"
 	
 namespace asmith { namespace serial {
 	
@@ -37,23 +38,15 @@ namespace asmith { namespace serial {
 		{"'",   "&apos;"}
 	};
 
-	static void xml_string_replace(std::string& aStr, const std::string& aTarget, const std::string& aReplacement) {
-	    size_t i = aStr.find(aTarget);
-	    while(i != std::string::npos) {
-		aStr.replace(i, aTarget.size(), aReplacement);
-		i = aStr.find(aTarget, i+aReplacement.size());
-	    }
-	}
-
 	static void xml_encode_string(std::string& aStr) {
 	    for(const std::string i[2] : XML_ILLEGAL) {
-		xml_string_replace(aStr, i[0], i[1]);
+			string_replacement(aStr, i[0], i[1]);
 	    }
 	}
 
 	static void xml_decode_string(std::string& aStr) {
 	    for(const std::string i[2] : XML_ILLEGAL) {
-		xml_string_replace(aStr, i[1], i[0]);
+			string_replacement(aStr, i[1], i[0]);
 	    }
 	}
 
