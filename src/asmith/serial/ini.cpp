@@ -162,20 +162,33 @@ namespace asmith { namespace serial {
 			}else {
 				std::string name;
 				std::string value;
+				bool comment = false;
 				while(c != '=') {
+					if(c == mCommentSymbol) {
+						comment = true;
+						break;
+					}
 					name += c;
 					line.read(&c, 1);
 					c = line.peek();
 				}
+
+				if(comment) continue;
 				line.read(&c, 1);
 				c = line.peek();
 				while(! line.eof()) {
+					if(c == mCommentSymbol) {
+						comment = true;
+						break;
+					}
 					value += c;
 					line.read(&c, 1);
 					c = line.peek();
 				}
 
+				if(comment) continue;
 				convert_to_serial(section + mHierarchySeperator + name, value);
+
 			}
 		}
 
