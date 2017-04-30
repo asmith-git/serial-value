@@ -58,6 +58,11 @@ using namespace asmith;
 
 // Create an object that should be serialised
 objective_function myObject;
+myObject.name = "De Jong 1";
+myObject.lower_bounds = { -5.12f, -5.12f };
+myObject.upper_bounds = { 5.12f, 5.12f };
+myObject.dimensions = 2;
+myObject.minimise = true;
 
 // Write the object into a binary file
 binary_format().write<objective_function>(myObject, std::ofstream("myObject.bin"));
