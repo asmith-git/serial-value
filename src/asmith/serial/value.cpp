@@ -323,6 +323,20 @@ namespace asmith { namespace serial {
 
 	value::object_t value::get_object() const {
 		switch(mType) {
+		case ARRAY_T:
+			{
+				value tmp;
+				object_t& object = tmp.get_object();
+				const array_t& array_ = *mArray;
+				const size_t s = array_.size();
+				for(size_t i = 0; i < s; ++i) {
+					object.emplace(
+						std::to_string(i),
+						array_[i]
+					);
+				}
+				return object;
+			}
 		case OBJECT_T:
 			return *mObject;
 		default:
