@@ -116,9 +116,28 @@ namespace asmith { namespace serial {
 			aStream.read(&c, 1);
 		}
 
-		// Read body
+		skip_whitespace(aStream);
+		c = aStream.peek();
+		if(c == '<') {
+			// Read child elements
+			aStream.read(&c, 1);
+			c = aStream.peek();
+			aStream.putback('<');
+			if(c != '/') {
+				read_xml(aParser, aStream);
+			}
+		}else {
+			// Read body
+			std::string body;
 
-		// Read child elements
+			while (c != '>') {
+				body += c;
+				aStream.read(&c, 1);
+				c = aStream.peek();
+			}
+
+			aParser.add_body(body.c_str());
+		}
 
 		// Open tag
 
