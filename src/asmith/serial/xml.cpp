@@ -143,11 +143,28 @@ namespace asmith { namespace serial {
 			aParser.add_body(body.c_str());
 		}
 
-		// Open tag
+		// Open tag		
+		skip_whitespace(aStream);
+		c = aStream.peek();
+		if (c != '<') throw std::runtime_error("asmith::serial::read_xml : Expected tag to begin with '<'");
+		aStream.read(&c, 1);
 
 		// Read name
+		size_t nameLength2 = 0;
+		skip_whitespace(aStream);
+		c = aStream.peek();
+		while (!(std::isspace(c) || c == '/' || c == '>')) {
+			aStream.read(&c, 1);
+			if(nameBuf[nameLength2++] != c)  throw std::runtime_error("asmith::serial::read_xml : Expected starting and ending tags to have the same name");
+			c = aStream.peek();
+		}
 
 		// Close tag
+		skip_whitespace(aStream);
+		c = aStream.peek();
+		if (c != '>') throw std::runtime_error("asmith::serial::read_xml : Expected tag to end with '<'");
+		aStream.read(&c, 1);
+
 		aParser.end_element(nameBuf);
 	}
 
