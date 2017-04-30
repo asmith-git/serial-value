@@ -76,5 +76,35 @@ objective_function jsonObject = json_format().read<objective_function>(std::ifst
 
 // Read the object from a XML file
 objective_function xmlObject = xml_format().read<objective_function>(std::ifstream("myObject.xml"));
+```
 
+## Sample JSON Output
+```C++
+{
+	"dimensions":2,
+	"lower_bounds":[
+		-5.12,
+		-5.12
+	],
+	"minimise":true,
+	"name":"De Jong 1",
+	"upper_bounds":[
+		5.12,
+		5.12
+	]
+}
+```
+
+## Sample XML Output
+```C++
+<xml dimensions="2" minimise="true" name="De Jong 1">
+	<lower_bounds>
+		<0>-5.12</0>
+		<1>-5.12</1>
+	</lower_bounds>
+	<upper_bounds>
+		<0>5.12</0>
+		<1>5.12</1>
+	</upper_bounds>
+</xml>
 ```
