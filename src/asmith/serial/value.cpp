@@ -178,6 +178,39 @@ namespace asmith { namespace serial {
 		return i->second;
 	}
 
+	value& value::add_member(const std::string& aKey, const value& aValue) {
+		return get_object().emplace(aKey, aValue).first->second;
+	}
+
+	value& value::push_back(const value& aValue) {
+		array_t& array_ = get_array();
+		array_.push_back(aValue);
+		return array_.back();
+	}
+
+	value value::pop_back() {
+		array_t& array_ = get_array();
+		const value tmp = std::move(array_.back());
+		array_.pop_back();
+		return tmp;
+	}
+
+	void value::clear() {
+		switch(mType) {
+		case STRING_T:
+			mString->clear();
+			break;
+		case ARRAY_T:
+			mArray->clear();
+			break;
+		case OBJECT_T:
+			mObject->clear();
+			break;
+		default:
+			break;
+		}
+	}
+
 	size_t value::size() const throw() {
 		return mType == ARRAY_T ? mArray->size() : mType == OBJECT_T ? mObject->size() : 0;
 	}
