@@ -287,19 +287,27 @@ namespace asmith { namespace serial {
 		throw std::runtime_error("value : Value is not convertable to number");
 	}
 
-	value::string_t value::get_string() const {
+	const value::string_t& value::get_string() const {
 		switch(mType) {
 		case BOOL_T:
-			return mBool ? "true" : "false";
-			break;
+			{
+				const bool_t tmp = mBool;
+				const_cast<value*>(this)->set_string() = (tmp ? "true" : "false");
+				return *mString;
+			}
 		case CHAR_T:
 			{
 				const char buf[2] = {mChar, '\0'};
-				return buf;
+				const_cast<value*>(this)->set_string() = buf;
+				return *mString;
 			}
 			break;
 		case NUMBER_T:
-			return std::to_string(mNumber);
+			{
+				const number_t tmp = mNumber;
+				const_cast<value*>(this)->set_string() = std::to_string(tmp);
+				return *mString;
+			}
 			break;
 		case STRING_T:
 			return *mString;
@@ -311,7 +319,7 @@ namespace asmith { namespace serial {
 		throw std::runtime_error("value : Value is not convertable to string");
 	}
 
-	value::array_t value::get_array() const {
+	const value::array_t& value::get_array() const {
 		switch(mType) {
 		case ARRAY_T:
 			return *mArray;
@@ -343,7 +351,8 @@ namespace asmith { namespace serial {
 				array_[atoi(j->first.c_str())] = j->second;
 			}
 
-			return array_;
+			const_cast<value*>(this)->set_array() = array_;
+			return *mArray;
 		}
 		default:
 			break;
@@ -352,7 +361,7 @@ namespace asmith { namespace serial {
 		throw std::runtime_error("value : Value is not convertable to array");
 	}
 
-	value::object_t value::get_object() const {
+	const value::object_t& value::get_object() const {
 		switch(mType) {
 		case ARRAY_T:
 			{
@@ -366,7 +375,9 @@ namespace asmith { namespace serial {
 						array_[i]
 					);
 				}
-				return object;
+
+				const_cast<value*>(this)->set_object() = object;
+				return *mObject;
 			}
 		case OBJECT_T:
 			return *mObject;

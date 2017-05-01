@@ -102,9 +102,9 @@ namespace asmith { namespace serial {
 		bool_t get_bool() const;
 		char_t get_char() const;
 		number_t get_number() const;
-		string_t get_string() const;
-		array_t get_array() const;
-		object_t get_object() const;
+		const string_t& get_string() const;
+		const array_t& get_array() const;
+		const object_t& get_object() const;
 	};
 }}
 
