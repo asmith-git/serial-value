@@ -182,6 +182,15 @@ namespace asmith { namespace serial {
 		return get_object().emplace(aKey, aValue).first->second;
 	}
 
+	value value::remove_member(const std::string& aKey) {
+		object_t& object = get_object();
+		const auto i = object.find(aKey);
+		if(i == object.end()) return value();
+		const value tmp = std::move(i->second);
+		object.erase(i);
+		return tmp;
+	}
+
 	value& value::push_back(const value& aValue) {
 		array_t& array_ = get_array();
 		array_.push_back(aValue);

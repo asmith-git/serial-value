@@ -82,6 +82,7 @@ namespace asmith { namespace serial {
 		const value& operator[](const std::string&) const;
 
 		value& add_member(const std::string&, const value&);
+		value remove_member(const std::string&);
 		value& push_back(const value&);
 		value pop_back();
 		void clear();
