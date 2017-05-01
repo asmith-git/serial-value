@@ -436,8 +436,7 @@ namespace asmith { namespace serial {
 	#define SV_GET_NEW \
 	value::SV_TYPE& value::SV_JOIN(get_,SV_NAME)() throw() {\
 		if(mType != SV_ENUM) {\
-			const SV_TYPE tmp = static_cast<const value*>(this)->SV_JOIN(get_,SV_NAME)();\
-			SV_JOIN(set_,SV_NAME)() = tmp;\
+			static_cast<const value*>(this)->SV_JOIN(get_,SV_NAME)();\
 		}\
 		return *SV_VALUE;\
 	}
