@@ -17,6 +17,18 @@ struct objective_function {
 	bool minimise;
 };
 
+// Define macros that simplify the serialisation
+#define MACRO_JOIN2(a, b) a##b
+#define MACRO_JOIN(a, b) MACRO_JOIN2(a , b)
+
+#define SERIALISE_BEGIN value tmp; value::object_t& object = tmp.set_object();
+#define SERIALISE_END return tmp
+#define SERIALISE_MEMBER(name) object.emplace(#name, serial::serialise<decltype(MACRO_JOIN(aValue.,name))>(MACRO_JOIN(aValue.,name)))
+
+#define DESERIALISE_BEGIN output_t tmp; const value::object_t& object = aValue.get_object();
+#define DESERIALISE_END return tmp
+#define DESERIALISE_MEMBER(name) MACRO_JOIN(tmp.,name) = serial::deserialise<decltype(MACRO_JOIN(tmp.,name))>(object.find(#name)->second)
+
 // This is the class that handles conversion to and from an intermediary serialisation format 
 template<>
 struct asmith::serial::serialiser<objective_function> {
@@ -25,30 +37,24 @@ struct asmith::serial::serialiser<objective_function> {
 
   	// This function serialises the class
 	static inline value serialise(input_t aValue) throw() { 
-		value tmp;
-		value::object_t& object = tmp.set_object();
-		#define auto_serialise(output, input) object.emplace(output, serial::serialise<decltype(input)>(input));
-			auto_serialise("name",		  aValue.name)
-			auto_serialise("lower_bounds",	  aValue.lower_bounds)
-			auto_serialise("upper_bounds",	  aValue.upper_bounds)
-			auto_serialise("dimensions",	  aValue.dimensions)
-			auto_serialise("minimise",	  aValue.minimise)
-		#undef auto_serialise
-		return tmp;
+		SERIALISE_BEGIN;
+		SERIALISE_MEMBER(name);
+		SERIALISE_MEMBER(lower_bounds);
+		SERIALISE_MEMBER(upper_bounds);
+		SERIALISE_MEMBER(dimensions);
+		SERIALISE_MEMBER(minimise);
+		SERIALISE_END;
 	}
 
   	// This function deserialises the class
 	static inline output_t deserialise(const value& aValue) throw() { 
-		output_t tmp;
-		const value::object_t& object = aValue.get_object();
-		#define auto_deserialise(input, output) output = serial::deserialise<decltype(output)>(object.find(input)->second);
-			auto_deserialise("name",          tmp.name)
-			auto_deserialise("lower_bounds",  tmp.lower_bounds)
-			auto_deserialise("upper_bounds",  tmp.upper_bounds)
-			auto_deserialise("dimensions",    tmp.dimensions)
-			auto_deserialise("minimise",      tmp.minimise)
-		#undef auto_deserialise
-		return tmp;
+		DESERIALISE_BEGIN;
+		DESERIALISE_MEMBER(name);
+		DESERIALISE_MEMBER(lower_bounds);
+		DESERIALISE_MEMBER(upper_bounds);
+		DESERIALISE_MEMBER(dimensions);
+		DESERIALISE_MEMBER(minimise);
+		DESERIALISE_END;
 	}
 };
 ```
