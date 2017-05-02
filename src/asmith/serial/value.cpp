@@ -271,7 +271,7 @@ namespace asmith { namespace serial {
 				sv_strcmp(mString->c_str(), "one") ||
 				sv_strcmp(mString->c_str(), "yes") ||
 				sv_strcmp(mString->c_str(), "true") 
-			) return false;
+			) return true;
 			break;
 		default:
 			break;
