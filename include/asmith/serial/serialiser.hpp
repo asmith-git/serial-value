@@ -114,29 +114,15 @@ namespace asmith { namespace serial {
 		const size_t varCount = aCls.get_variable_count();
 		if(varCount == 0) return val;
 
-		size_t bufSize = 256;
-		uint8_t* buffer = new uint8_t[bufSize];
 		value::object_t& object = val.set_object();
 		for(size_t i = 0; i < varCount; ++i) {
 			const reflection_variable& var = aCls.get_variable(i);
 			const reflection_class& vCls = var.get_class();
-			const size_t s = vCls.get_size();
-			if(s > bufSize) {
-				delete[] buffer;
-				buffer = new uint8_t[bufSize];
-			}
 
-			vCls.get_trivial_constructor().call(buffer);
-			try {
-				var.get_unsafe(aValue, buffer);
-				object.emplace(var.get_name(), reflection_serialise(vCls, buffer));
-			}catch (std::exception& e) {
-				vCls.get_destructor().call(buffer);
-				throw e;
-			}
-			vCls.get_destructor().call(buffer);
+			reflection_instance obj(vCls);
+			var.get_unsafe(aValue, obj.as_unsafe());
+			object.emplace(var.get_name(), reflection_serialise(vCls, obj.as_unsafe()));
 		}
-		delete[] buffer;
 
 		return val;
 	}
@@ -196,29 +182,16 @@ namespace asmith { namespace serial {
 		const size_t varCount = aCls.get_variable_count();
 		if(varCount == 0) return;
 
-		size_t bufSize = 256;
-		uint8_t* buffer = new uint8_t[bufSize];
 		const value::object_t& object = aValue.get_object();
 		for(size_t i = 0; i < varCount; ++i) {
 			const reflection_variable& var = aCls.get_variable(i);
 			const reflection_class& vCls = var.get_class();
-			const size_t s = vCls.get_size();
-			if(s > bufSize) {
-				delete[] buffer;
-				buffer = new uint8_t[bufSize];
-			}
 
-			vCls.get_trivial_constructor().call(buffer);
-			try {
-				reflection_deserialise(object.find(var.get_name())->second, vCls, buffer);
-				var.set_unsafe(aReturn, buffer);
-			}catch (std::exception& e) {
-				vCls.get_destructor().call(buffer);
-				throw e;
-			}
-			vCls.get_destructor().call(buffer);
+
+			reflection_instance obj(vCls);
+			reflection_deserialise(object.find(var.get_name())->second, vCls, obj.as_unsafe());
+			var.set_unsafe(aReturn, obj.as_unsafe());
 		}
-		delete[] buffer;
 	}
 #endif
 
