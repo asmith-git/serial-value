@@ -68,8 +68,11 @@ namespace asmith { namespace serial {
 		case '*':
 			throw std::runtime_error("asmith::serial::reflection_serialise : Automatic serialisation not implemented for pointers");
 		case '&':
-			//! \todo Implement for references
-			throw std::runtime_error("asmith::serial::reflection_serialise : Automatic serialisation not implemented for references");
+			{
+				std::string n = name;
+				n.pop_back();
+				return reflection_serialise(reflection_class::get_class_by_name(n.c_str()), aValue);
+			}
 		case ']':
 			//! \todo Implement for arrays
 			throw std::runtime_error("asmith::serial::reflection_serialise : Automatic serialisation not implemented for fixed size arrays");
@@ -129,8 +132,11 @@ namespace asmith { namespace serial {
 		case '*':
 			throw std::runtime_error("asmith::serial::reflection_deserialise : Automatic deserialisation not implemented for pointers");
 		case '&':
-			//! \todo Implement for references
-			throw std::runtime_error("asmith::serial::reflection_deserialise : Automatic deserialisation not implemented for references");
+			{
+				std::string n = name;
+				n.pop_back();
+				reflection_deserialise(aValue, reflection_class::get_class_by_name(n.c_str()), aReturn);
+			}
 		case ']':
 			//! \todo Implement for arrays
 			throw std::runtime_error("asmith::serial::reflection_deserialise : Automatic deserialisation not implemented for fixed size arrays");
