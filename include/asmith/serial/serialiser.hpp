@@ -26,8 +26,20 @@ namespace asmith { namespace serial {
 		typedef const T& input_t;
 		typedef T output_t;
 
+#ifdef ASMITH_REFLECTION_CLASS_HPP
+		static value serialise(input_t aValue) throw() {
+			return reflection_serialise(reflect<T>(), &aValue);
+		}
+
+		static value deserialise(const value& aValue) throw() {
+			output_t tmp;
+			return reflection_deserialise(aValue, reflect<T>(), &tmp);
+			return tmp;
+		}
+#else
 		static value serialise(input_t) throw() = delete;
 		static output_t deserialise(const value&) throw() = delete;
+#endif
 	};
 
 	template<class T>
@@ -43,6 +55,129 @@ namespace asmith { namespace serial {
 	typename serialiser<T>::output_t deserialise(const value& aValue){
 		return serialiser<T>::deserialise(aValue);
 	}
+
+
+
+
+#ifdef ASMITH_REFLECTION_CLASS_HPP
+	static value reflection_serialise(const reflection_class& aCls, const void* aValue) {
+		const char* name = aCls.get_name();
+		const size_t nameLen = strlen(name);
+
+		switch (name[nameLen]) {
+		case '*':
+			throw std::runtime_error("asmith::serial::reflection_serialise : Automatic serialisation not implemented for pointers");
+		case '&':
+			//! \todo Implement for references
+			throw std::runtime_error("asmith::serial::reflection_serialise : Automatic serialisation not implemented for references");
+		case ']':
+			//! \todo Implement for arrays
+			throw std::runtime_error("asmith::serial::reflection_serialise : Automatic serialisation not implemented for fixed size arrays");
+		}
+
+		if(strcmp(name, reflect<bool>().get_name()) == 0)			return value(*reinterpret_cast<const bool*>(aValue));
+		else if(strcmp(name, reflect<char>().get_name()) == 0)		return value(*reinterpret_cast<const char*>(aValue));
+		else if(strcmp(name, reflect<uint8_t>().get_name()) == 0)	return value(*reinterpret_cast<const uint8_t*>(aValue));
+		else if(strcmp(name, reflect<uint16_t>().get_name()) == 0)	return value(*reinterpret_cast<const uint16_t*>(aValue));
+		else if(strcmp(name, reflect<uint32_t>().get_name()) == 0)	return value(*reinterpret_cast<const uint32_t*>(aValue));
+		else if(strcmp(name, reflect<uint64_t>().get_name()) == 0)	return value(*reinterpret_cast<const uint64_t*>(aValue));
+		else if(strcmp(name, reflect<int8_t>().get_name()) == 0)	return value(*reinterpret_cast<const int8_t*>(aValue));
+		else if(strcmp(name, reflect<int16_t>().get_name()) == 0)	return value(*reinterpret_cast<const int16_t*>(aValue));
+		else if(strcmp(name, reflect<int32_t>().get_name()) == 0)	return value(*reinterpret_cast<const int32_t*>(aValue));
+		else if(strcmp(name, reflect<int64_t>().get_name()) == 0)	return value(*reinterpret_cast<const int64_t*>(aValue));
+		else if(strcmp(name, reflect<float>().get_name()) == 0)		return value(*reinterpret_cast<const float*>(aValue));
+		else if(strcmp(name, reflect<double>().get_name()) == 0)	return value(*reinterpret_cast<const double*>(aValue));
+		//! \todo Handle std::string, std::vector, ect
+
+		value val;
+		const size_t varCount = aCls.get_variable_count();
+		if(varCount == 0) return val;
+
+		size_t bufSize = 256;
+		uint8_t* buffer = new uint8_t[bufSize];
+		value::object_t& object = val.set_object();
+		for(size_t i = 0; i < varCount; ++i) {
+			const reflection_variable& var = aCls.get_variable(i);
+			const reflection_class& vCls = var.get_class();
+			const size_t s = vCls.get_size();
+			if(s > bufSize) {
+				delete[] buffer;
+				buffer = new uint8_t[bufSize];
+			}
+
+			vCls.get_trivial_constructor().call(buffer);
+			try {
+				var.get_unsafe(aValue, buffer);
+				object.emplace(var.get_name(), reflection_serialise(vCls, buffer));
+			}catch (std::exception& e) {
+				vCls.get_destructor().call(buffer);
+				throw e;
+			}
+			vCls.get_destructor().call(buffer);
+		}
+		delete[] buffer;
+
+		return val;
+	}
+
+
+	void reflection_deserialise(const value& aValue, const reflection_class& aCls, void* aReturn) {
+		const char* name = aCls.get_name();
+		const size_t nameLen = strlen(name);
+
+		switch (name[nameLen]) {
+		case '*':
+			throw std::runtime_error("asmith::serial::reflection_deserialise : Automatic deserialisation not implemented for pointers");
+		case '&':
+			//! \todo Implement for references
+			throw std::runtime_error("asmith::serial::reflection_deserialise : Automatic deserialisation not implemented for references");
+		case ']':
+			//! \todo Implement for arrays
+			throw std::runtime_error("asmith::serial::reflection_deserialise : Automatic deserialisation not implemented for fixed size arrays");
+		}
+
+		if(strcmp(name, reflect<bool>().get_name()) == 0)			{ *reinterpret_cast<bool*>(aReturn) = aValue.get_bool(); return; }
+		else if(strcmp(name, reflect<char>().get_name()) == 0)		{ *reinterpret_cast<char*>(aReturn) = aValue.get_char(); return; }
+		else if(strcmp(name, reflect<uint8_t>().get_name()) == 0)	{ *reinterpret_cast<uint8_t*>(aReturn) = aValue.get_number(); return; }
+		else if(strcmp(name, reflect<uint16_t>().get_name()) == 0)	{ *reinterpret_cast<uint16_t*>(aReturn) = aValue.get_number(); return; }
+		else if(strcmp(name, reflect<uint32_t>().get_name()) == 0)	{ *reinterpret_cast<uint32_t*>(aReturn) = aValue.get_number(); return; }
+		else if(strcmp(name, reflect<uint64_t>().get_name()) == 0)	{ *reinterpret_cast<uint64_t*>(aReturn) = aValue.get_number(); return; }
+		else if(strcmp(name, reflect<int8_t>().get_name()) == 0)	{ *reinterpret_cast<int8_t*>(aReturn) = aValue.get_number(); return; }
+		else if(strcmp(name, reflect<int16_t>().get_name()) == 0)	{ *reinterpret_cast<int16_t*>(aReturn) = aValue.get_number(); return; }
+		else if(strcmp(name, reflect<int32_t>().get_name()) == 0)	{ *reinterpret_cast<int32_t*>(aReturn) = aValue.get_number(); return; }
+		else if(strcmp(name, reflect<int64_t>().get_name()) == 0)	{ *reinterpret_cast<int64_t*>(aReturn) = aValue.get_number(); return; }
+		else if(strcmp(name, reflect<float>().get_name()) == 0)		{ *reinterpret_cast<float*>(aReturn) = aValue.get_number(); return; }
+		else if(strcmp(name, reflect<double>().get_name()) == 0)	{ *reinterpret_cast<double*>(aReturn) = aValue.get_number(); return; }
+		//! \todo Handle std::string, std::vector, ect
+
+		const size_t varCount = aCls.get_variable_count();
+		if(varCount == 0) return;
+
+		size_t bufSize = 256;
+		uint8_t* buffer = new uint8_t[bufSize];
+		const value::object_t& object = aValue.get_object();
+		for(size_t i = 0; i < varCount; ++i) {
+			const reflection_variable& var = aCls.get_variable(i);
+			const reflection_class& vCls = var.get_class();
+			const size_t s = vCls.get_size();
+			if(s > bufSize) {
+				delete[] buffer;
+				buffer = new uint8_t[bufSize];
+			}
+
+			vCls.get_trivial_constructor().call(buffer);
+			try {
+				reflection_deserialise(object.find(var.get_name())->second, vCls, buffer);
+				var.set_unsafe(aReturn, buffer);
+			}catch (std::exception& e) {
+				vCls.get_destructor().call(buffer);
+				throw e;
+			}
+			vCls.get_destructor().call(buffer);
+		}
+		delete[] buffer;
+	}
+#endif
 
 	// -- Specialisations --
 
