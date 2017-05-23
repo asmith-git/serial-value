@@ -155,10 +155,28 @@ namespace asmith { namespace serial {
 				std::string n = name;
 				n.pop_back();
 				reflection_deserialise(aValue, reflection_class::get_class_by_name(n.c_str()), aReturn);
+				return;
 			}
 		case ']':
-			//! \todo Implement for arrays
-			throw std::runtime_error("asmith::serial::reflection_deserialise : Automatic deserialisation not implemented for fixed size arrays");
+			{
+				std::string n = name;
+				const size_t i = n.find_last_of('[');
+				if(i == std::string::npos) throw std::runtime_error("asmith::reflection_serialise : Malformed class name");
+				std::string tmp = n.substr(i+1);
+				tmp.pop_back();
+				n = n.substr(0, i);
+				const value::array_t& array_ = aValue.get_array();
+				const size_t s = std::stoi(tmp.c_str());
+				if(s != array_.size()) throw std::runtime_error("asmith::reflection_serialise : Array length mismatch");
+				const reflection_class& cls = reflection_class::get_class_by_name(n.c_str());
+				const size_t clsS = cls.get_size();
+				uint8_t* offset = reinterpret_cast<uint8_t*>(aReturn);
+				for(size_t i = 0; i < s; ++i) {
+					reflection_deserialise(array_[i], cls, offset);
+					offset += clsS;
+				}
+				return;
+			}
 		}
 
 		if(strcmp(name, reflect<bool>().get_name()) == 0)			{ *reinterpret_cast<bool*>(aReturn) = aValue.get_bool(); return; }
