@@ -62,6 +62,7 @@ namespace asmith { namespace serial {
 #ifdef ASMITH_REFLECTION_CLASS_HPP
 	static value reflection_serialise(const reflection_class& aCls, const void* aValue) {
 		const char* name = aCls.get_name();
+		if(strcmp(name, INVALID_REFLECTION_CLASS.get_name()) == 0) throw std::runtime_error("asmith::reflection_serialise : Undefined class");
 		const size_t nameLen = strlen(name);
 
 		switch (name[nameLen]) {
@@ -74,8 +75,25 @@ namespace asmith { namespace serial {
 				return reflection_serialise(reflection_class::get_class_by_name(n.c_str()), aValue);
 			}
 		case ']':
-			//! \todo Implement for arrays
-			throw std::runtime_error("asmith::serial::reflection_serialise : Automatic serialisation not implemented for fixed size arrays");
+			{
+				std::string n = name;
+				const size_t i = n.find_last_of('[');
+				if(i == std::string::npos) throw std::runtime_error("asmith::reflection_serialise : Malformed class name");
+				std::string tmp = n.substr(i+1);
+				tmp.pop_back();
+				n = n.substr(0, i);
+				value val;
+				value::array_t& array_ = val.set_array();
+				const size_t s = std::stoi(tmp.c_str());
+				const reflection_class& cls = reflection_class::get_class_by_name(n.c_str());
+				const size_t clsS = cls.get_size();
+				const uint8_t* offset = reinterpret_cast<const uint8_t*>(aValue);
+				for(size_t i = 0; i < s; ++i) {
+					array_.push_back(reflection_serialise(cls, offset));
+					offset += clsS;
+				}
+				return val;
+			}
 		}
 
 		if(strcmp(name, reflect<bool>().get_name()) == 0)			return value(*reinterpret_cast<const bool*>(aValue));
@@ -126,6 +144,7 @@ namespace asmith { namespace serial {
 
 	void reflection_deserialise(const value& aValue, const reflection_class& aCls, void* aReturn) {
 		const char* name = aCls.get_name();
+		if(strcmp(name, INVALID_REFLECTION_CLASS.get_name()) == 0) throw std::runtime_error("asmith::reflection_deserialise : Undefined class");
 		const size_t nameLen = strlen(name);
 
 		switch (name[nameLen]) {
