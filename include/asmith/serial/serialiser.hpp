@@ -165,18 +165,18 @@ namespace asmith { namespace serial {
 			}
 		}
 
-		if(strcmp(name, reflect<bool>().get_name()) == 0)			{ *reinterpret_cast<bool*>(aReturn) = aValue.get_bool(); return; }
-		else if(strcmp(name, reflect<char>().get_name()) == 0)		{ *reinterpret_cast<char*>(aReturn) = aValue.get_char(); return; }
-		else if(strcmp(name, reflect<uint8_t>().get_name()) == 0)	{ *reinterpret_cast<uint8_t*>(aReturn) = aValue.get_number(); return; }
-		else if(strcmp(name, reflect<uint16_t>().get_name()) == 0)	{ *reinterpret_cast<uint16_t*>(aReturn) = aValue.get_number(); return; }
-		else if(strcmp(name, reflect<uint32_t>().get_name()) == 0)	{ *reinterpret_cast<uint32_t*>(aReturn) = aValue.get_number(); return; }
-		else if(strcmp(name, reflect<uint64_t>().get_name()) == 0)	{ *reinterpret_cast<uint64_t*>(aReturn) = aValue.get_number(); return; }
-		else if(strcmp(name, reflect<int8_t>().get_name()) == 0)	{ *reinterpret_cast<int8_t*>(aReturn) = aValue.get_number(); return; }
-		else if(strcmp(name, reflect<int16_t>().get_name()) == 0)	{ *reinterpret_cast<int16_t*>(aReturn) = aValue.get_number(); return; }
-		else if(strcmp(name, reflect<int32_t>().get_name()) == 0)	{ *reinterpret_cast<int32_t*>(aReturn) = aValue.get_number(); return; }
-		else if(strcmp(name, reflect<int64_t>().get_name()) == 0)	{ *reinterpret_cast<int64_t*>(aReturn) = aValue.get_number(); return; }
-		else if(strcmp(name, reflect<float>().get_name()) == 0)		{ *reinterpret_cast<float*>(aReturn) = aValue.get_number(); return; }
-		else if(strcmp(name, reflect<double>().get_name()) == 0)	{ *reinterpret_cast<double*>(aReturn) = aValue.get_number(); return; }
+		if(strcmp(name, reflect<bool>().get_name()) == 0)			{ *reinterpret_cast<bool*>(aReturn) = (bool) aValue.get_bool(); return; }
+		else if(strcmp(name, reflect<char>().get_name()) == 0)		{ *reinterpret_cast<char*>(aReturn) = (char) aValue.get_char(); return; }
+		else if(strcmp(name, reflect<uint8_t>().get_name()) == 0)	{ *reinterpret_cast<uint8_t*>(aReturn) = (uint8_t) aValue.get_number(); return; }
+		else if(strcmp(name, reflect<uint16_t>().get_name()) == 0)	{ *reinterpret_cast<uint16_t*>(aReturn) = (uint16_t) aValue.get_number(); return; }
+		else if(strcmp(name, reflect<uint32_t>().get_name()) == 0)	{ *reinterpret_cast<uint32_t*>(aReturn) = (uint32_t)aValue.get_number(); return; }
+		else if(strcmp(name, reflect<uint64_t>().get_name()) == 0)	{ *reinterpret_cast<uint64_t*>(aReturn) = (uint64_t)aValue.get_number(); return; }
+		else if(strcmp(name, reflect<int8_t>().get_name()) == 0)	{ *reinterpret_cast<int8_t*>(aReturn) = (int8_t)aValue.get_number(); return; }
+		else if(strcmp(name, reflect<int16_t>().get_name()) == 0)	{ *reinterpret_cast<int16_t*>(aReturn) = (int16_t)aValue.get_number(); return; }
+		else if(strcmp(name, reflect<int32_t>().get_name()) == 0)	{ *reinterpret_cast<int32_t*>(aReturn) = (int32_t)aValue.get_number(); return; }
+		else if(strcmp(name, reflect<int64_t>().get_name()) == 0)	{ *reinterpret_cast<int64_t*>(aReturn) = (int64_t)aValue.get_number(); return; }
+		else if(strcmp(name, reflect<float>().get_name()) == 0)		{ *reinterpret_cast<float*>(aReturn) = (float) aValue.get_number(); return; }
+		else if(strcmp(name, reflect<double>().get_name()) == 0)	{ *reinterpret_cast<double*>(aReturn) = (double) aValue.get_number(); return; }
 		//! \todo Handle std::string, std::vector, ect
 
 		const size_t varCount = aCls.get_variable_count();
